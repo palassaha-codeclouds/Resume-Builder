@@ -19,6 +19,7 @@ import Professional from "../components/Professional";
 import Experience from "../components/Experience";
 import Education from "../components/Education";
 import Project from "../components/Project";
+import Skills from "../components/Skills";
 
 const ResumeBuilder = () => {
   const { resumeId } = useParams();
@@ -152,6 +153,9 @@ const ResumeBuilder = () => {
                 )}
                 {activeSection.id === "projects" && (
                     <Project data={resumeData.project} onChange={(data)=> setResumeData(prev=> ({...prev, project:data}))} />
+                )}
+                {activeSection.id === "skills" && (
+                    <Skills data={resumeData.skills} onChange={(data)=> setResumeData(prev=> ({...prev, skills:data}))} />
                 )}
               </div>
             </div>

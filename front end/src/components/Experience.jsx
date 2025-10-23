@@ -142,7 +142,7 @@ const Experience = ({ data, onChange }) => {
                                         updateExperience(index, "description", e.target.value)
                                     }
                                     rows={4}
-                                    className="w-full text-sm px-3 py-2 rounded-lg resize-none"
+                                    className="w-full text-sm px-3 py-2 rounded-lg resize-none focus:ring focus:ring-green-500 focus:border-green-500"
                                     placeholder="Describe your key responsibilities and achievements..."
                                 />
                             </div>
