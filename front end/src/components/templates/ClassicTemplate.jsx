@@ -17,6 +17,11 @@ const ClassicTemplate = ({ data, accentColor }) => {
                 <h1 className="text-3xl font-bold mb-2" style={{ color: accentColor }}>
                     {data.personal_info?.full_name || "Your Name"}
                 </h1>
+                
+                {/* 🎨 ADDED: Profession/Title under the Name in the Header */}
+                <p className="uppercase text-gray-700 font-medium text-sm tracking-widest mb-4">
+                    {data?.personal_info?.profession || "Profession"}
+                </p>
 
                 <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
                     {data.personal_info?.email && (
@@ -82,9 +87,12 @@ const ClassicTemplate = ({ data, accentColor }) => {
                                     </div>
                                 </div>
                                 {exp.description && (
-                                    <div className="text-gray-700 leading-relaxed whitespace-pre-line">
-                                        {exp.description}
-                                    </div>
+                                    // Bullet points fix
+                                    <ul className="list-disc list-outside ml-5 text-gray-700 leading-relaxed space-y-1">
+                                        {exp.description.split("\n").map((line, i) => (
+                                            line.trim() && <li key={i}>{line}</li> 
+                                        ))}
+                                    </ul>
                                 )}
                             </div>
                         ))}
@@ -99,16 +107,29 @@ const ClassicTemplate = ({ data, accentColor }) => {
                         PROJECTS
                     </h2>
 
-                    <ul className="space-y-3 ">
+                    <div className="space-y-3">
                         {data.project.map((proj, index) => (
-                            <div key={index} className="flex justify-between items-start border-l-3 border-gray-300 pl-6">
-                                <div>
-                                    <li className="font-semibold text-gray-800 ">{proj.name}</li>
-                                    <p className="text-gray-600">{proj.description}</p>
-                                </div>
+                            <div key={index} className="border-l-3 border-gray-300 pl-6">
+                                <h3 className="font-semibold text-gray-800">{proj.name}</h3>
+                                
+                                {/* 🎨 ADDED: Project Type under the Project Name */}
+                                {proj.type && (
+                                    <p className="text-sm mb-1" style={{ color: accentColor }} >
+                                        {proj.type}
+                                    </p>
+                                )}
+
+                                {proj.description && (
+                                    // Bullet points fix
+                                    <ul className="list-disc list-outside ml-5 text-gray-700 space-y-1">
+                                        {proj.description.split("\n").map((line, i) => (
+                                            line.trim() && <li key={i}>{line}</li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
                         ))}
-                    </ul>
+                    </div>
                 </section>
             )}
 

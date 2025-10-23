@@ -18,6 +18,7 @@ import TemplateSelector from "../components/TemplateSelector";
 import Professional from "../components/Professional";
 import Experience from "../components/Experience";
 import Education from "../components/Education";
+import Project from "../components/Project";
 
 const ResumeBuilder = () => {
   const { resumeId } = useParams();
@@ -148,6 +149,9 @@ const ResumeBuilder = () => {
                 )}
                 {activeSection.id === "education" && (
                     <Education data={resumeData.education} onChange={(data)=> setResumeData(prev=> ({...prev, education:data}))} />
+                )}
+                {activeSection.id === "projects" && (
+                    <Project data={resumeData.project} onChange={(data)=> setResumeData(prev=> ({...prev, project:data}))} />
                 )}
               </div>
             </div>
