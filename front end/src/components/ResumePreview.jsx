@@ -44,7 +44,7 @@ const ResumePreview = ({ data, template, accentColor, classes = "" }) => {
                         visibility: hidden;
                     }
                     #resume-preview, #resume-preview * {
-                        visibility: hidden;
+                        visibility: visible;
                     }
                     #resume-preview {
                         position: absolute;
