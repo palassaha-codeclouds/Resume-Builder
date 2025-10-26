@@ -69,23 +69,23 @@ const ResumeBuilder = () => {
   }, []);
 
   const changeResumeVisibility = async () => {
-    setResumeData({...resumeData, public: !resumeData.public});
-  }
+    setResumeData({ ...resumeData, public: !resumeData.public });
+  };
 
   const handleShare = () => {
-    const frontendUrl = window.location.href.split('/app')[0];
-    const resumeUrl = frontendUrl + '/view/' + resumeId;
+    const frontendUrl = window.location.href.split("/app")[0];
+    const resumeUrl = frontendUrl + "/view/" + resumeId;
 
-    if(navigator.share){
-      navigator.share({url: resumeUrl, text: "My Resume"});
-    }else{
+    if (navigator.share) {
+      navigator.share({ url: resumeUrl, text: "My Resume" });
+    } else {
       alert("Share not supported on this browser");
     }
-  }
+  };
 
   const downloadResume = () => {
     window.print();
-  }
+  };
 
   return (
     <div>
@@ -167,19 +167,47 @@ const ResumeBuilder = () => {
                   />
                 )}
                 {activeSection.id === "summary" && (
-                    <Professional data={resumeData.professional_summary} onChange={(data)=> setResumeData(prev=> ({...prev, professional_summary:data}))} />
+                  <Professional
+                    data={resumeData.professional_summary}
+                    onChange={(data) =>
+                      setResumeData((prev) => ({
+                        ...prev,
+                        professional_summary: data,
+                      }))
+                    }
+                  />
                 )}
                 {activeSection.id === "experience" && (
-                    <Experience data={resumeData.experience} onChange={(data)=> setResumeData(prev=> ({...prev, experience:data}))} />
+                  <Experience
+                    data={resumeData.experience}
+                    onChange={(data) =>
+                      setResumeData((prev) => ({ ...prev, experience: data }))
+                    }
+                  />
                 )}
                 {activeSection.id === "education" && (
-                    <Education data={resumeData.education} onChange={(data)=> setResumeData(prev=> ({...prev, education:data}))} />
+                  <Education
+                    data={resumeData.education}
+                    onChange={(data) =>
+                      setResumeData((prev) => ({ ...prev, education: data }))
+                    }
+                  />
                 )}
                 {activeSection.id === "projects" && (
-                    <Project data={resumeData.project} onChange={(data)=> setResumeData(prev=> ({...prev, project:data}))} />
+                  <Project
+                    data={resumeData.project}
+                    onChange={(data) =>
+                      setResumeData((prev) => ({ ...prev, project: data }))
+                    }
+                  />
                 )}
                 {activeSection.id === "skills" && (
-                    <Skills data={resumeData.skills} onChange={(data)=> setResumeData(prev=> ({...prev, skills:data}))} />
+                  <Skills
+                    data={resumeData.skills}
+                    onChange={(data) =>
+                      setResumeData((prev) => ({ ...prev, skills: data }))
+                    }
+                  />
                 )}
               </div>
               <button className="bg-gradient-to-br from-green-100 to-green-200 ring-green-300 text-green-600 ring hover:ring-green-400 transition-all rounded-md px-6 py-2 mt-6 text-sm">
@@ -193,20 +221,32 @@ const ResumeBuilder = () => {
             <div className="relative w-full">
               <div className="absolute bottom-3 left-0 right-0 flex items-center justify-end gap-2">
                 {resumeData.public && (
-                  <button onClick={handleShare} className="flex items-center p-2 px-4 gap-2 text-xs bg-gradient-to-br from-green-100 to-green-200 text-bg-green-600 rounded-lg ring-green-300 hover:ring transition-colors">
-                    <Share2Icon className="size-4"/> Share
+                  <button
+                    onClick={handleShare}
+                    className="flex items-center p-2 px-4 gap-2 text-xs bg-gradient-to-br from-green-100 to-green-200 text-bg-green-600 rounded-lg ring-green-300 hover:ring transition-colors"
+                  >
+                    <Share2Icon className="size-4" /> Share
                   </button>
                 )}
 
-                <button onClick={changeResumeVisibility} className="flex items-center p-2 px-4 gap-2 text-xs bg-gradient-to-br from-green-100 to-green-200 text-bg-green-600 rounded-lg ring-green-300 hover:ring transition-colors">
-                  {resumeData.public ? <EyeIcon className="size-4"/> : <EyeOffIcon className="size-4"/>}
-                  {resumeData.public ? 'Public' : 'Private'}
+                <button
+                  onClick={changeResumeVisibility}
+                  className="flex items-center p-2 px-4 gap-2 text-xs bg-gradient-to-br from-green-100 to-green-200 text-bg-green-600 rounded-lg ring-green-300 hover:ring transition-colors"
+                >
+                  {resumeData.public ? (
+                    <EyeIcon className="size-4" />
+                  ) : (
+                    <EyeOffIcon className="size-4" />
+                  )}
+                  {resumeData.public ? "Public" : "Private"}
                 </button>
 
-                <button onClick={downloadResume} className="flex items-center p-2 px-4 gap-2 text-xs bg-gradient-to-br from-green-100 to-green-200 text-bg-green-600 rounded-lg ring-green-300 hover:ring transition-colors">
-                  <DownloadIcon className="size-4"/> Download
+                <button
+                  onClick={downloadResume}
+                  className="flex items-center p-2 px-4 gap-2 text-xs bg-gradient-to-br from-green-100 to-green-200 text-bg-green-600 rounded-lg ring-green-300 hover:ring transition-colors"
+                >
+                  <DownloadIcon className="size-4" /> Download
                 </button>
-
               </div>
             </div>
 
