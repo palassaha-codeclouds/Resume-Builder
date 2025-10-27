@@ -1,0 +1,21 @@
+cQ_MEr8sxiC3S/@
+
+create table public.users (
+  id uuid not null default gen_random_uuid (),
+  user_name character varying not null default ''::character varying,
+  full_name character varying not null,
+  email character varying not null,
+  hashed_password text not null,
+  disabled boolean null,
+  created_at timestamp with time zone not null default now(),
+  constraint users_pkey primary key (id),
+  constraint users_email_key unique (email),
+  constraint users_user_name_key unique (user_name)
+) TABLESPACE pg_default;
+
+
+config -> connections
+models -> pydantic schemas
+controllers -> api
+services -> functions
+routes -> 

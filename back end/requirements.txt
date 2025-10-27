@@ -1,0 +1,16 @@
+reportlab
+fastapi 
+fastapi[standard]
+uvicorn 
+pydantic 
+reportlab 
+python-multipart
+supabase
+python-jose[cryptography]
+python-dotenv
+sqlmodel
+psycopg2-binary
+sqlalchemy
+bcrypt==4.0.1
+passlib[bcrypt]==1.7.4
+asyncpg
