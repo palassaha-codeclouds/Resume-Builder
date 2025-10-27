@@ -136,7 +136,7 @@ const Hero = () => {
 
                     {/* CTA Button */}
                     <Link
-                        to="/app"
+                        to="/app?state=register"
                         className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-8 sm:px-10 h-11 sm:h-12 m-1 ring-1 ring-teal-600 flex items-center justify-center gap-2 transition"
                     >
                         Get Started
