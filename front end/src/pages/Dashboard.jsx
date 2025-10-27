@@ -9,9 +9,9 @@ import {
   XIcon,
 } from "lucide-react";
 import React, { useState } from "react";
-import { dummyResumeData } from "../assets/assets";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { createResume } from "../utils/api";
 
 const Dashboard = () => {
   const colors = ["#9333ea", "#d97706", "#dc2626", "#0284c7", "#16a34a"];
@@ -24,14 +24,49 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
-  const loadAllResumes = async () => {
-    setAllResumes(dummyResumeData);
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
   };
 
-  const createResume = async (event) => {
+  const loadAllResumes = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/resumes/", {
+        method: "GET",
+        credentials: "include", // ✅ crucial for sending cookies
+        headers: {
+          // no need to add Authorization header if backend reads cookie
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch resumes");
+
+      const data = await res.json();
+      setAllResumes(data);
+    } catch (err) {
+      console.error(err);
+      alert("Error loading resumes: " + err.message);
+    }
+  };
+
+  const createResumeHandler = async (event) => {
     event.preventDefault();
-    setShowCreateResume(false);
-    navigate(`/app/builder/res123`);
+    try {
+      const payload = { title }; // basic payload for now
+      const newResume = await createResume(payload);
+
+      setShowCreateResume(false);
+      setTitle("");
+
+      // navigate to builder with actual resume ID
+      navigate(`/app/builder/${newResume.id}`);
+    } catch (err) {
+      console.error("Error creating resume:", err);
+      alert("Failed to create resume: " + (err.detail || err.message));
+    }
   };
 
   const uploadResume = async (event) => {
@@ -45,11 +80,32 @@ const Dashboard = () => {
   };
 
   const delResume = async (resumeId) => {
-    const confirm = window.confirm("Are you sure to delete?");
-    if (confirm) {
-      setAllResumes((prev) => prev.filter((resume) => resume._id !== resumeId));
+  const confirmDelete = window.confirm("Are you sure you want to delete this resume?");
+  if (!confirmDelete) return;
+
+  try {
+    const res = await fetch(`http://localhost:8000/resumes/${resumeId}`, {
+      method: "DELETE",
+      credentials: "include", // ✅ sends the access token cookie
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.detail || "Failed to delete resume");
     }
-  };
+
+    // Remove deleted resume from the UI
+    setAllResumes((prev) => prev.filter((resume) => resume.id !== resumeId));
+    alert("Resume deleted successfully");
+  } catch (err) {
+    console.error(err);
+    alert("Error deleting resume: " + err.message);
+  }
+};
+
 
   useEffect(() => {
     loadAllResumes();
@@ -92,7 +148,7 @@ const Dashboard = () => {
             return (
               <button
                 key={index}
-                onClick={() => navigate(`/app/builder/${resume._id}`)}
+                onClick={() => navigate(`/app/builder/${resume.id}`)}
                 className="relative w-full sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 border group hover:shadow-lg transition-all duration-300 cursor-pointer"
                 style={{
                   background: `linear-gradient(135deg, ${baseColor}10, ${baseColor}40`,
@@ -124,12 +180,15 @@ const Dashboard = () => {
                   className="absolute top-1 right-1 group-hover:flex items-center hidden"
                 >
                   <TrashIcon
-                    onClick={() => delResume(resume._id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      delResume(resume.id);
+                    }}
                     className="size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors"
                   />
                   <PencilIcon
                     onClick={() => {
-                      setEditResumeId(resume._id);
+                      setEditResumeId(resume.id);
                       setTitle(resume.title);
                     }}
                     className="size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors"
@@ -142,7 +201,7 @@ const Dashboard = () => {
 
         {showCreateResume && (
           <form
-            onSubmit={createResume}
+            onSubmit={createResumeHandler}
             onClick={() => setShowCreateResume(false)}
             className="fixed inset-0 bg-black/70 backdrop-blur-sm z-10 flex items-center justify-center"
           >
