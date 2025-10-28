@@ -93,9 +93,9 @@ const ResumeBuilder = () => {
 
       const data = await res.json();
 
-      // Ensure all nested fields exist
+      // nested fields 
       setResumeData({
-        _id: data.id || "",
+        id: data.id || "",
         title: data.title || "",
         personal_info: data.personal_info || {},
         professional_summary: data.professional_summary || "",
@@ -105,7 +105,7 @@ const ResumeBuilder = () => {
         skills: data.skills || [],
         template: data.template || "classic",
         accent_color: data.accent_color || "#314158",
-        public: data.is_public || false,
+        is_public: data.is_public || false,
       });
 
       document.title = data.title || "Resume Builder";
