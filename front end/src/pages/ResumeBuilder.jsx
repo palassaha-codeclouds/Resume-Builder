@@ -25,7 +25,7 @@ import Education from "../components/Education";
 import Project from "../components/Project";
 import Skills from "../components/Skills";
 
-import { createResume } from "../utils/api";
+import { createResume, updateResume } from "../utils/api";
 
 const ResumeBuilder = () => {
   const { resumeId } = useParams();
@@ -257,11 +257,11 @@ const ResumeBuilder = () => {
                     if (resumeData.id) {
                       // 🟢 Update existing resume
                       res = await updateResume(resumeData);
-                      alert("Resume updated successfully!");
+                      alert(`Resume "${res.title}" updated successfully!`);
                     } else {
                       // 🟢 Create a new resume
                       res = await createResume(resumeData);
-                      alert("Resume created successfully!");
+                      alert(`Resume "${res.title}" created successfully!`);
                       // Store new ID to enable future updates
                       setResumeData(prev => ({ ...prev, id: res.id }));
                     }
@@ -269,7 +269,13 @@ const ResumeBuilder = () => {
                     console.log("Saved resume:", res);
                   } catch (err) {
                     console.error("Error saving resume:", err);
-                    alert(err.detail || err.message || "Failed to save resume");
+
+                    // Handle Axios error response properly
+                    let msg = "Failed to save resume";
+                    if (err.response?.data?.detail) msg = err.response.data.detail;
+                    else if (err.message) msg = err.message;
+
+                    alert(msg);
                   }
                 }}
                 className="bg-gradient-to-br from-green-100 to-green-200 ring-green-300 text-green-600 hover:ring-green-400 transition-all rounded-md px-6 py-2 mt-6 text-sm"
