@@ -67,9 +67,7 @@ async def create_resume_full(resume_data: ResumeFullCreate, session: AsyncSessio
     updated_at=new_resume.updated_at,
 )
 
-
-
-# ------------------ GET ALL RESUMES FOR CURRENT USER ------------------ #
+# Get all resumes
 @router.get("/", response_model=List[ResumeRead])
 async def get_all_resumes(session: AsyncSession = Depends(get_session)):
     query = select(Resume).options(
@@ -83,6 +81,7 @@ async def get_all_resumes(session: AsyncSession = Depends(get_session)):
     resumes = result.all()
     return resumes
 
+# Get resume by ID
 @router.get("/{resume_id}", response_model=ResumeRead)
 async def get_resume(resume_id: str, session: AsyncSession = Depends(get_session)):
     query = (
@@ -98,12 +97,11 @@ async def get_resume(resume_id: str, session: AsyncSession = Depends(get_session
     )
 
     result = await session.execute(query)
-    resume = result.scalar_one_or_none()  # fetch single result or None
+    resume = result.scalar_one_or_none()  
 
     if not resume:
         raise HTTPException(status_code=404, detail="Resume not found")
 
-    # Ensure empty lists for nested relationships to avoid frontend crashes
     resume.skills = resume.skills or []
     resume.experience = resume.experience or []
     resume.education = resume.education or []
@@ -131,14 +129,13 @@ async def get_resume(resume_id: str, session: AsyncSession = Depends(get_session
 
 
 
-# ------------------ DELETE RESUME ------------------ #
+# Delete resume
 @router.delete("/{resume_id}")
 async def delete_resume(
     resume_id: uuid.UUID,
     session: AsyncSession = Depends(get_session),
     current_user = Depends(get_current_user),
 ):
-    # Fetch the resume and check ownership
     resume = await session.get(Resume, resume_id)
     if not resume:
         raise HTTPException(status_code=404, detail="Resume not found")
@@ -146,14 +143,12 @@ async def delete_resume(
     if resume.user_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to delete this resume")
 
-    # Delete child records manually
     await session.execute(delete(PersonalInfo).where(PersonalInfo.resume_id == resume.id))
     await session.execute(delete(Skill).where(Skill.resume_id == resume.id))
     await session.execute(delete(Experience).where(Experience.resume_id == resume.id))
     await session.execute(delete(Education).where(Education.resume_id == resume.id))
     await session.execute(delete(Project).where(Project.resume_id == resume.id))
 
-    # Delete the resume itself
     await session.delete(resume)
     await session.commit()
 

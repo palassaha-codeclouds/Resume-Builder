@@ -35,9 +35,8 @@ const Dashboard = () => {
     try {
       const res = await fetch("http://localhost:8000/resumes/", {
         method: "GET",
-        credentials: "include", // ✅ crucial for sending cookies
+        credentials: "include",
         headers: {
-          // no need to add Authorization header if backend reads cookie
           "Content-Type": "application/json",
         },
       });
@@ -55,13 +54,12 @@ const Dashboard = () => {
   const createResumeHandler = async (event) => {
     event.preventDefault();
     try {
-      const payload = { title }; // basic payload for now
+      const payload = { title };
       const newResume = await createResume(payload);
 
       setShowCreateResume(false);
       setTitle("");
 
-      // navigate to builder with actual resume ID
       navigate(`/app/builder/${newResume.id}`);
     } catch (err) {
       console.error("Error creating resume:", err);
@@ -80,32 +78,39 @@ const Dashboard = () => {
   };
 
   const delResume = async (resumeId) => {
-  const confirmDelete = window.confirm("Are you sure you want to delete this resume?");
-  if (!confirmDelete) return;
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this resume?"
+    );
+    if (!confirmDelete) return;
 
-  try {
-    const res = await fetch(`http://localhost:8000/resumes/${resumeId}`, {
-      method: "DELETE",
-      credentials: "include", // ✅ sends the access token cookie
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!res.ok) {
-      const errData = await res.json();
-      throw new Error(errData.detail || "Failed to delete resume");
+    const token = getCookie("access_token");
+    if (!token) {
+      alert("Authentication failed. Please log in again.");
+      return;
     }
 
-    // Remove deleted resume from the UI
-    setAllResumes((prev) => prev.filter((resume) => resume.id !== resumeId));
-    alert("Resume deleted successfully");
-  } catch (err) {
-    console.error(err);
-    alert("Error deleting resume: " + err.message);
-  }
-};
+    try {
+      const res = await fetch(`http://localhost:8000/resumes/${resumeId}`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      });
 
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.detail || "Failed to delete resume");
+      }
+
+      setAllResumes((prev) => prev.filter((resume) => resume.id !== resumeId));
+      alert("Resume deleted successfully");
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting resume: " + err.message);
+    }
+  };
 
   useEffect(() => {
     loadAllResumes();

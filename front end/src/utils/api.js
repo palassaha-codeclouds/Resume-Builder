@@ -21,7 +21,7 @@ export const loginUser = async (formData) => {
         }
 
         if (res.data && res.data.access_token) {
-            document.cookie = `access_token=${res.data.access_token}; path=/; max-age=3600; SameSite=Lax`;
+            document.cookie = `access_token=${res.data.access_token}; path=/; max-age=3600; SameSite=None; Secure`;
         }
 
         return res;
@@ -75,16 +75,14 @@ export const createResume = async (resumeData) => {
 export const getCurrentUser = async () => {
     try {
         const token = getCookie("access_token");
+        console.log("Access token found:", token);
         
-        // If no token is found, the user is not logged in. Return null.
         if (!token) {
             return null; 
         }
         
-        // Send a GET request to /auth/me with the Bearer token
         const res = await axios.get(`${API_BASE_URL}/auth/me`, {
             headers: {
-                // Ensure the Authorization header is set as expected by your FastAPI/Depends
                 Authorization: `Bearer ${token}`,
             },
             validateStatus: () => true,
@@ -92,14 +90,11 @@ export const getCurrentUser = async () => {
         });
 
         if (res.status === 200) {
-            // Your backend returns the current_user object directly on success
             return res.data; 
         } else if (res.status === 401) {
-            // Token expired or invalid. Clear the bad cookie and treat as logged out.
-            document.cookie = "access_token=; path=/; Max-Age=-99999999;";
+            document.cookie = "access_token=; path=/; max-age=0; SameSite=Lax;";
             return null;
         } else {
-            // Handle other errors
             throw new Error(res.data.detail || `Failed to fetch user data (Status ${res.status})`);
         }
     } catch (err) {

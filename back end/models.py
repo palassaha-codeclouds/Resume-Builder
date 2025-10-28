@@ -36,7 +36,7 @@ class Token(SQLModel):
     token_type: str
 
 
-# ==================== Resume Models ==================== #
+# Resume Models 
 
 class ResumeBase(SQLModel):
     title: str
@@ -69,7 +69,7 @@ class ResumeRead(ResumeBase):
     created_at: datetime
     updated_at: datetime
 
-# ==================== Personal Info ==================== #
+# Personal Info 
 class PersonalInfo(SQLModel, table=True):
     __tablename__ = "personal_info"
 
@@ -85,7 +85,7 @@ class PersonalInfo(SQLModel, table=True):
 
     resume: Optional[Resume] = Relationship(back_populates="personal_info")
 
-# ==================== Skills ==================== #
+# Skills 
 class Skill(SQLModel, table=True):
     __tablename__ = "skills"
 
@@ -95,7 +95,7 @@ class Skill(SQLModel, table=True):
 
     resume: Optional[Resume] = Relationship(back_populates="skills")
 
-# ==================== Experience ==================== #
+# Experience
 class Experience(SQLModel, table=True):
     __tablename__ = "experience"
 
@@ -110,7 +110,7 @@ class Experience(SQLModel, table=True):
 
     resume: Optional[Resume] = Relationship(back_populates="experience")
 
-# ==================== Education ==================== #
+# Education 
 class Education(SQLModel, table=True):
     __tablename__ = "education"
 
@@ -124,7 +124,7 @@ class Education(SQLModel, table=True):
 
     resume: Optional[Resume] = Relationship(back_populates="education")
 
-# ==================== Projects ==================== #
+# Projects 
 class Project(SQLModel, table=True):
     __tablename__ = "projects"
 
@@ -136,10 +136,7 @@ class Project(SQLModel, table=True):
 
     resume: Optional[Resume] = Relationship(back_populates="projects")
 
-
-
-
-
+# Create and Read Operations
 
 class PersonalInfoCreate(SQLModel):
     full_name: Optional[str] = ""
@@ -179,9 +176,6 @@ class ResumeFullCreate(ResumeBase):
     experience: Optional[List[ExperienceCreate]] = []
     education: Optional[List[EducationCreate]] = []
     projects: Optional[List[ProjectCreate]] = []
-
-
-
 
 
 
