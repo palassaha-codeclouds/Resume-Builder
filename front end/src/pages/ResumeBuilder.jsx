@@ -26,8 +26,11 @@ import Project from "../components/Project";
 import Skills from "../components/Skills";
 
 import { createResume, updateResume } from "../utils/api";
+import { usePDF } from 'react-to-pdf';
+import html2pdf from 'html2pdf.js';
 
 const ResumeBuilder = () => {
+  const { toPDF, targetRef } = usePDF({filename: 'page.pdf'});
   const { resumeId } = useParams();
 
   const [resumeData, setResumeData] = useState({
@@ -104,7 +107,17 @@ const ResumeBuilder = () => {
     loadExistingResume();
   }, [resumeId]);
 
-  const downloadResume = () => window.print();
+  const downloadResume = () => {
+  const element = targetRef.current;
+  const opt = {
+    margin: 10,
+    filename: 'resume.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+  };
+  html2pdf().set(opt).from(element).save();
+};
 
   return (
     <div>
@@ -272,6 +285,7 @@ const ResumeBuilder = () => {
             </div>
 
             <ResumePreview
+              ref={targetRef}
               data={resumeData}
               template={resumeData.template}
               accentColor={resumeData.accent_color}

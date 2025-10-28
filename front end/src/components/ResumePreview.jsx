@@ -3,7 +3,7 @@ import ClassicTemplate from "./templates/ClassicTemplate";
 import ModernTemplate from "./templates/ModernTemplate";
 import MinimalTemplate from "./templates/MinimalTemplate";
 
-const ResumePreview = ({ data, template, accentColor, classes = "" }) => {
+const ResumePreview = ({ data, template, accentColor, classes = "", ...props }) => {
   // Safe defaults for all nested fields
   const safeData = {
     personal_info: data.personal_info || {},
@@ -31,7 +31,7 @@ const ResumePreview = ({ data, template, accentColor, classes = "" }) => {
   };
 
   return (
-    <div className="w-full bg-gray-100">
+    <div className="w-full bg-gray-100" {...props}>
       <div
         id="resume-preview"
         className={
