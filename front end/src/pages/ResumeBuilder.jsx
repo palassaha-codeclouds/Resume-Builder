@@ -65,7 +65,6 @@ const ResumeBuilder = () => {
     projects: [],
   });
 
-
   const [activeSectionIndex, setActiveSectionIndex] = useState(0);
 
   const sections = [
@@ -93,7 +92,7 @@ const ResumeBuilder = () => {
 
       const data = await res.json();
 
-      // nested fields 
+      // nested fields
       setResumeData({
         id: data.id || "",
         title: data.title || "",
@@ -153,7 +152,9 @@ const ResumeBuilder = () => {
               <hr
                 className="absolute top-0 left-0 h-1 bg-gradient-to-r from-teal-500 to-teal-600 border-none transition-all duration-2000"
                 style={{
-                  width: `${(activeSectionIndex * 100) / (sections.length - 1)}%`,
+                  width: `${
+                    (activeSectionIndex * 100) / (sections.length - 1)
+                  }%`,
                 }}
               />
 
@@ -171,9 +172,7 @@ const ResumeBuilder = () => {
                   {activeSectionIndex !== 0 && (
                     <button
                       onClick={() =>
-                        setActiveSectionIndex((prev) =>
-                          Math.max(prev - 1, 0)
-                        )
+                        setActiveSectionIndex((prev) => Math.max(prev - 1, 0))
                       }
                       className="flex items-center gap-1 p-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all"
                       disabled={activeSectionIndex === 0}
@@ -187,7 +186,7 @@ const ResumeBuilder = () => {
                         Math.min(prev + 1, sections.length - 1)
                       )
                     }
-                    className="flex items-center gap-1 p-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all"
+                    className="flex items-center gap-1 p-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all disabled:opacity-50"
                     disabled={activeSectionIndex === sections.length - 1}
                   >
                     Next <ChevronRight className="size-4" />
@@ -200,7 +199,10 @@ const ResumeBuilder = () => {
                   <PersonalInfoForm
                     data={resumeData.personal_info}
                     onChange={(data) =>
-                      setResumeData((prev) => ({ ...prev, personal_info: data }))
+                      setResumeData((prev) => ({
+                        ...prev,
+                        personal_info: data,
+                      }))
                     }
                   />
                 )}
@@ -263,7 +265,7 @@ const ResumeBuilder = () => {
                       res = await createResume(resumeData);
                       alert(`Resume "${res.title}" created successfully!`);
                       // Store new ID to enable future updates
-                      setResumeData(prev => ({ ...prev, id: res.id }));
+                      setResumeData((prev) => ({ ...prev, id: res.id }));
                     }
 
                     console.log("Saved resume:", res);
@@ -272,7 +274,8 @@ const ResumeBuilder = () => {
 
                     // Handle Axios error response properly
                     let msg = "Failed to save resume";
-                    if (err.response?.data?.detail) msg = err.response.data.detail;
+                    if (err.response?.data?.detail)
+                      msg = err.response.data.detail;
                     else if (err.message) msg = err.message;
 
                     alert(msg);
@@ -282,9 +285,6 @@ const ResumeBuilder = () => {
               >
                 Save Changes
               </button>
-
-
-
             </div>
           </div>
 
