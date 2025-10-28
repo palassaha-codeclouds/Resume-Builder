@@ -59,8 +59,8 @@ async def login(
     access_token = create_access_token(data={"sub": user.user_name}, expires_delta=access_token_expires)
     response.set_cookie(
         key="access_token",
-        value=f"Bearer {access_token}",
-        httponly=True,
+        value=access_token,
+        httponly=False,
         samesite="lax",
         max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )

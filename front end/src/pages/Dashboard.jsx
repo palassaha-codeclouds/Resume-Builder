@@ -229,13 +229,6 @@ const Dashboard = () => {
                     }}
                     className="size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors"
                   />
-                  <PencilIcon
-                    onClick={() => {
-                      setEditResumeId(resume.id);
-                      setTitle(resume.title);
-                    }}
-                    className="size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors"
-                  />
                 </div>
               </button>
             );
