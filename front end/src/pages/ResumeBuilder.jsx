@@ -30,20 +30,6 @@ import { createResume, updateResume } from "../utils/api";
 const ResumeBuilder = () => {
   const { resumeId } = useParams();
 
-  // const [resumeData, setResumeData] = useState({
-  //   _id: "",
-  //   title: "",
-  //   personal_info: {},
-  //   professional_summary: "",
-  //   experience: [],
-  //   education: [],
-  //   projects: [],
-  //   skills: [],
-  //   template: "classic",
-  //   accent_color: "#314158",
-  //   public: false,
-  // });
-
   const [resumeData, setResumeData] = useState({
     title: "",
     professional_summary: "",
@@ -117,18 +103,6 @@ const ResumeBuilder = () => {
   useEffect(() => {
     loadExistingResume();
   }, [resumeId]);
-
-  // const changeResumeVisibility = () => {
-  //   setResumeData((prev) => ({ ...prev, public: !prev.public }));
-  // };
-
-  // const handleShare = () => {
-  //   const frontendUrl = window.location.href.split("/app")[0];
-  //   const resumeUrl = frontendUrl + "/view/" + resumeId;
-
-  //   if (navigator.share) navigator.share({ url: resumeUrl, text: "My Resume" });
-  //   else alert("Share not supported on this browser");
-  // };
 
   const downloadResume = () => window.print();
 
@@ -257,14 +231,11 @@ const ResumeBuilder = () => {
                     let res;
 
                     if (resumeData.id) {
-                      // 🟢 Update existing resume
                       res = await updateResume(resumeData);
                       alert(`Resume "${res.title}" updated successfully!`);
                     } else {
-                      // 🟢 Create a new resume
                       res = await createResume(resumeData);
                       alert(`Resume "${res.title}" created successfully!`);
-                      // Store new ID to enable future updates
                       setResumeData((prev) => ({ ...prev, id: res.id }));
                     }
 
@@ -272,7 +243,6 @@ const ResumeBuilder = () => {
                   } catch (err) {
                     console.error("Error saving resume:", err);
 
-                    // Handle Axios error response properly
                     let msg = "Failed to save resume";
                     if (err.response?.data?.detail)
                       msg = err.response.data.detail;
@@ -292,23 +262,6 @@ const ResumeBuilder = () => {
           <div className="lg:col-span-7 max-lg:mt-6">
             <div className="relative w-full">
               <div className="absolute bottom-3 left-0 right-0 flex items-center justify-end gap-2">
-                {/* {resumeData.public && (
-                  <button
-                    onClick={handleShare}
-                    className="flex items-center p-2 px-4 gap-2 text-xs bg-gradient-to-br from-green-100 to-green-200 text-green-600 rounded-lg ring-green-300 hover:ring transition-colors"
-                  >
-                    <Share2Icon className="size-4" /> Share
-                  </button>
-                )} */}
-
-                {/* <button
-                  onClick={changeResumeVisibility}
-                  className="flex items-center p-2 px-4 gap-2 text-xs bg-gradient-to-br from-green-100 to-green-200 text-green-600 rounded-lg ring-green-300 hover:ring transition-colors"
-                >
-                  {resumeData.public ? <EyeIcon className="size-4" /> : <EyeOffIcon className="size-4" />}
-                  {resumeData.public ? "Public" : "Private"}
-                </button> */}
-
                 <button
                   onClick={downloadResume}
                   className="flex items-center p-2 px-4 gap-2 text-xs bg-gradient-to-br from-green-100 to-green-200 text-green-600 rounded-lg ring-green-300 hover:ring transition-colors"

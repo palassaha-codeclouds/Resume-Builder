@@ -16,7 +16,7 @@ from database import get_session
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-# ---------------- Signup ----------------
+# Signup 
 @router.post("/signup", status_code=201)
 async def signup(user: UserCreate, session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(User).where(User.email == user.email))
@@ -43,7 +43,7 @@ async def signup(user: UserCreate, session: AsyncSession = Depends(get_session))
     return {"msg": "User created successfully", "user_id": new_user.id}
 
 
-# ---------------- Login ----------------
+# Login 
 @router.post("/login", response_model=Token)
 async def login(
     response: Response,
@@ -68,27 +68,22 @@ async def login(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-# ---------------- Me ----------------
+# Me 
 @router.get("/me", response_model=UserRead)
 async def get_me(current_user: User = Depends(get_current_user)):
-    # from auth import get_current_user
-    # user = await get_current_user(request, session)
-    # if not user:
-    #     raise HTTPException(status_code=404, detail="User not found")
     return current_user
 
 
-# ---------------- Logout ----------------
+# Logout 
 @router.post("/logout")
 async def logout(response: Response):
     response.delete_cookie(key="access_token", httponly=True, samesite="lax")
     return {"msg": "Successfully logged out"}
 
 
-# ---------------- Delete User ----------------
+# Delete User
 @router.delete("/delete", status_code=200)
 async def delete_user(response: Response, session: AsyncSession = Depends(get_session), user: User = Depends(get_current_user)):
-    # user = await get_current_user(request, session)
     await session.delete(user)
     await session.commit()
     response.delete_cookie(key="access_token", httponly=True, samesite="lax")

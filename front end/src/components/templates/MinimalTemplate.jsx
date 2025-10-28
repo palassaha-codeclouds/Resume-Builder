@@ -16,7 +16,7 @@ const MinimalTemplate = ({ data = {}, accentColor = "#000" }) => {
     const professionalSummary = data.professional_summary || "";
 
     return (
-        <div className="max-w-4xl mx-auto p-8 bg-white text-gray-900 font-light">
+        <div className="max-w-4xl mx-auto p-8 print:p-0 bg-white text-gray-900 font-light">
             {/* Header */}
             <header className="mb-10">
                 <h1 className="text-4xl font-thin mb-4 tracking-wide">
@@ -27,8 +27,12 @@ const MinimalTemplate = ({ data = {}, accentColor = "#000" }) => {
                     {personal.email && <span>{personal.email}</span>}
                     {personal.phone && <span>{personal.phone}</span>}
                     {personal.location && <span>{personal.location}</span>}
-                    {personal.linkedin && <span className="break-all">{personal.linkedin}</span>}
-                    {personal.website && <span className="break-all">{personal.website}</span>}
+                    {personal.linkedin && (
+                        <span className="break-all">{personal.linkedin}</span>
+                    )}
+                    {personal.website && (
+                        <span className="break-all">{personal.website}</span>
+                    )}
                 </div>
             </header>
 
@@ -54,7 +58,8 @@ const MinimalTemplate = ({ data = {}, accentColor = "#000" }) => {
                                 <div className="flex justify-between items-baseline mb-1">
                                     <h3 className="text-lg font-medium">{exp.position || ""}</h3>
                                     <span className="text-sm text-gray-500">
-                                        {formatDate(exp.start_date)} - {exp.is_current ? "Present" : formatDate(exp.end_date)}
+                                        {formatDate(exp.start_date)} -{" "}
+                                        {exp.is_current ? "Present" : formatDate(exp.end_date)}
                                     </span>
                                 </div>
                                 <p className="text-gray-600 mb-2">{exp.company || ""}</p>
@@ -80,9 +85,14 @@ const MinimalTemplate = ({ data = {}, accentColor = "#000" }) => {
                     </h2>
                     <div className="space-y-4">
                         {projects.map((proj, index) => (
-                            <div key={index} className="flex flex-col gap-2 justify-between items-baseline">
+                            <div
+                                key={index}
+                                className="flex flex-col gap-2 justify-between items-baseline"
+                            >
                                 <h3 className="text-lg font-medium">{proj.name || ""}</h3>
-                                {proj.type && <p className="text-sm text-gray-500">{proj.type}</p>}
+                                {proj.type && (
+                                    <p className="text-sm text-gray-500">{proj.type}</p>
+                                )}
                                 {proj.description && (
                                     <div className="text-gray-700 leading-relaxed whitespace-pre-line">
                                         {proj.description}
@@ -111,9 +121,13 @@ const MinimalTemplate = ({ data = {}, accentColor = "#000" }) => {
                                         {edu.degree || ""} {edu.field ? `in ${edu.field}` : ""}
                                     </h3>
                                     <p className="text-gray-600">{edu.institution || ""}</p>
-                                    {edu.gpa && <p className="text-sm text-gray-500">GPA: {edu.gpa}</p>}
+                                    {edu.gpa && (
+                                        <p className="text-sm text-gray-500">GPA: {edu.gpa}</p>
+                                    )}
                                 </div>
-                                <span className="text-sm text-gray-500">{formatDate(edu.graduation_date)}</span>
+                                <span className="text-sm text-gray-500">
+                                    {formatDate(edu.graduation_date)}
+                                </span>
                             </div>
                         ))}
                     </div>

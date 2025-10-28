@@ -177,7 +177,7 @@ class ResumeFullCreate(ResumeBase):
     education: Optional[List[EducationCreate]] = []
     projects: Optional[List[ProjectCreate]] = []
 
-
+# Read
 
 class PersonalInfoRead(BaseModel):
     id: UUID
