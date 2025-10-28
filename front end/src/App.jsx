@@ -6,10 +6,12 @@ import Dashboard from './pages/dashboard'
 import ResumeBuilder from './pages/ResumeBuilder'
 import Preview from './pages/preview'
 import Login from './pages/Login'
+import { Toaster } from 'react-hot-toast'
 
 const App = () => {
   return (
     <>
+    <Toaster position="bottom-right" reverseOrder={false} />
       <Routes>
         <Route path='/' element={<Home />} />
 
