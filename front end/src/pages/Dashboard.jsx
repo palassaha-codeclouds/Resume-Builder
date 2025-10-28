@@ -32,24 +32,42 @@ const Dashboard = () => {
   };
 
   const loadAllResumes = async () => {
-    try {
-      const res = await fetch("http://localhost:8000/resumes/", {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!res.ok) throw new Error("Failed to fetch resumes");
-
-      const data = await res.json();
-      setAllResumes(data);
-    } catch (err) {
-      console.error(err);
-      alert("Error loading resumes: " + err.message);
+  try {
+    const token = getCookie("access_token");
+    if (!token) {
+      alert("Authentication failed. Please log in again.");
+      navigate("/app/login");
+      return;
     }
-  };
+
+    const res = await fetch("http://localhost:8000/resumes/", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      if (res.status === 401) {
+        alert("Session expired. Please log in again.");
+        document.cookie = "access_token=; path=/; max-age=0; SameSite=Lax;";
+        navigate("/app/login");
+      } else {
+        throw new Error("Failed to fetch resumes");
+      }
+      return;
+    }
+
+    const data = await res.json();
+    setAllResumes(data);
+  } catch (err) {
+    console.error(err);
+    alert("Error loading resumes: " + err.message);
+  }
+};
+
 
   const createResumeHandler = async (event) => {
     event.preventDefault();

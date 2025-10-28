@@ -130,13 +130,23 @@ async def update_resume(
 
 # Get all resumes
 @router.get("/", response_model=List[ResumeRead])
-async def get_all_resumes(session: AsyncSession = Depends(get_session)):
-    query = select(Resume).options(
-        selectinload(Resume.personal_info),
-        selectinload(Resume.skills),
-        selectinload(Resume.experience),
-        selectinload(Resume.education),
-        selectinload(Resume.projects)
+async def get_all_resumes(
+    session: AsyncSession = Depends(get_session),
+    current_user=Depends(get_current_user)
+):
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    query = (
+        select(Resume)
+        .where(Resume.user_id == current_user.id)
+        .options(
+            selectinload(Resume.personal_info),
+            selectinload(Resume.skills),
+            selectinload(Resume.experience),
+            selectinload(Resume.education),
+            selectinload(Resume.projects)
+        )
     )
     result = await session.exec(query)
     resumes = result.all()
