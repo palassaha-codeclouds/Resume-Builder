@@ -52,10 +52,32 @@ const getCookie = (name) => {
     return null;
 };
 
+// export const createResume = async (resumeData) => {
+//     try {
+//         const token = getCookie("access_token");
+//         if (!token) throw new Error("Not authenticated");
+
+//         const res = await axios.post(`${API_BASE_URL}/resumes/create`, resumeData, {
+//             headers: {
+//                 "Content-Type": "application/json",
+//                 Authorization: `Bearer ${token}`,
+//             },
+//             withCredentials: true,
+//         });
+
+//         return res.data;
+//     } catch (err) {
+//         console.error("Error creating resume:", err);
+//         throw err.response?.data || new Error("Failed to create resume");
+//     }
+// };
+
 export const createResume = async (resumeData) => {
     try {
         const token = getCookie("access_token");
-        if (!token) throw new Error("Not authenticated");
+        if (!token) throw new Error("User not authenticated");
+
+        console.log("Sending resume data:", resumeData);
 
         const res = await axios.post(`${API_BASE_URL}/resumes/create`, resumeData, {
             headers: {
@@ -63,24 +85,56 @@ export const createResume = async (resumeData) => {
                 Authorization: `Bearer ${token}`,
             },
             withCredentials: true,
+            validateStatus: () => true, // Prevent axios from throwing for non-2xx
         });
 
+        if (res.status !== 200 && res.status !== 201) {
+            console.error("Resume creation failed:", res.data);
+            throw new Error(res.data.detail || "Failed to create resume");
+        }
+
+        console.log("Resume created successfully:", res.data);
         return res.data;
     } catch (err) {
         console.error("Error creating resume:", err);
-        throw err.response?.data || new Error("Failed to create resume");
+        throw err.response?.data || new Error("Unexpected error during resume creation");
     }
 };
+
+export const updateResume = async (resumeData) => {
+    try {
+        const token = getCookie("access_token");
+        if (!token) throw new Error("Not authenticated");
+
+        const res = await axios.put(
+            `${API_BASE_URL}/resumes/update/${resumeData.id}`,
+            resumeData,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                withCredentials: true,
+            }
+        );
+
+        return res.data;
+    } catch (err) {
+        console.error("Error updating resume:", err);
+        throw err.response?.data || new Error("Failed to update resume");
+    }
+};
+
 
 export const getCurrentUser = async () => {
     try {
         const token = getCookie("access_token");
         console.log("Access token found:", token);
-        
+
         if (!token) {
-            return null; 
+            return null;
         }
-        
+
         const res = await axios.get(`${API_BASE_URL}/auth/me`, {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -90,7 +144,7 @@ export const getCurrentUser = async () => {
         });
 
         if (res.status === 200) {
-            return res.data; 
+            return res.data;
         } else if (res.status === 401) {
             document.cookie = "access_token=; path=/; max-age=0; SameSite=Lax;";
             return null;

@@ -54,7 +54,27 @@ const Dashboard = () => {
   const createResumeHandler = async (event) => {
     event.preventDefault();
     try {
-      const payload = { title };
+      const payload = {
+        title,
+        professional_summary: "",
+        template: "classic",
+        accent_color: "#314158",
+        is_public: false,
+        personal_info: {
+          full_name: "",
+          email: "",
+          phone: "",
+          location: "",
+          linkedin: "",
+          website: "",
+          profession: "",
+        },
+        skills: [],
+        experience: [],
+        education: [],
+        projects: [],
+      };
+
       const newResume = await createResume(payload);
 
       setShowCreateResume(false);

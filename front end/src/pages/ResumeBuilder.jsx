@@ -25,22 +25,46 @@ import Education from "../components/Education";
 import Project from "../components/Project";
 import Skills from "../components/Skills";
 
+import { createResume } from "../utils/api";
+
 const ResumeBuilder = () => {
   const { resumeId } = useParams();
 
+  // const [resumeData, setResumeData] = useState({
+  //   _id: "",
+  //   title: "",
+  //   personal_info: {},
+  //   professional_summary: "",
+  //   experience: [],
+  //   education: [],
+  //   projects: [],
+  //   skills: [],
+  //   template: "classic",
+  //   accent_color: "#314158",
+  //   public: false,
+  // });
+
   const [resumeData, setResumeData] = useState({
-    _id: "",
     title: "",
-    personal_info: {},
     professional_summary: "",
+    template: "classic",
+    accent_color: "#314158",
+    is_public: false,
+    personal_info: {
+      full_name: "",
+      email: "",
+      phone: "",
+      location: "",
+      linkedin: "",
+      website: "",
+      profession: "",
+    },
+    skills: [],
     experience: [],
     education: [],
     projects: [],
-    skills: [],
-    template: "classic",
-    accent_color: "#314158",
-    public: false,
   });
+
 
   const [activeSectionIndex, setActiveSectionIndex] = useState(0);
 
@@ -225,9 +249,36 @@ const ResumeBuilder = () => {
                 )}
               </div>
 
-              <button className="bg-gradient-to-br from-green-100 to-green-200 ring-green-300 text-green-600 hover:ring-green-400 transition-all rounded-md px-6 py-2 mt-6 text-sm">
+              <button
+                onClick={async () => {
+                  try {
+                    let res;
+
+                    if (resumeData.id) {
+                      // 🟢 Update existing resume
+                      res = await updateResume(resumeData);
+                      alert("Resume updated successfully!");
+                    } else {
+                      // 🟢 Create a new resume
+                      res = await createResume(resumeData);
+                      alert("Resume created successfully!");
+                      // Store new ID to enable future updates
+                      setResumeData(prev => ({ ...prev, id: res.id }));
+                    }
+
+                    console.log("Saved resume:", res);
+                  } catch (err) {
+                    console.error("Error saving resume:", err);
+                    alert(err.detail || err.message || "Failed to save resume");
+                  }
+                }}
+                className="bg-gradient-to-br from-green-100 to-green-200 ring-green-300 text-green-600 hover:ring-green-400 transition-all rounded-md px-6 py-2 mt-6 text-sm"
+              >
                 Save Changes
               </button>
+
+
+
             </div>
           </div>
 
