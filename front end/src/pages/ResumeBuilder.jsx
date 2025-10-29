@@ -24,6 +24,7 @@ import Experience from "../components/Experience";
 import Education from "../components/Education";
 import Project from "../components/Project";
 import Skills from "../components/Skills";
+import TemplateForm from "../components/TemplateForm";
 
 import { createResume, updateResume } from "../utils/api";
 import { usePDF } from 'react-to-pdf';
@@ -58,6 +59,7 @@ const ResumeBuilder = () => {
   const [activeSectionIndex, setActiveSectionIndex] = useState(0);
 
   const sections = [
+    { id: "template", name: "Select Template", icon: User },
     { id: "personal", name: "Personal info", icon: User },
     { id: "summary", name: "Summary", icon: FileText },
     { id: "experience", name: "Experience", icon: Briefcase },
@@ -184,6 +186,12 @@ const ResumeBuilder = () => {
               </div>
 
               <div className="space-y-6">
+                {activeSection.id === "template" && (
+                  <TemplateForm
+                    data={resumeData}
+                    onChange={(updatedData) => setResumeData(updatedData)}
+                  />
+                )}
                 {activeSection.id === "personal" && (
                   <PersonalInfoForm
                     data={resumeData.personal_info}
