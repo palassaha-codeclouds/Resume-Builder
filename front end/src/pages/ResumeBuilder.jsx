@@ -28,6 +28,7 @@ import Skills from "../components/Skills";
 import { createResume, updateResume } from "../utils/api";
 import { usePDF } from 'react-to-pdf';
 import html2pdf from 'html2pdf.js';
+import toast from "react-hot-toast";
 
 const ResumeBuilder = () => {
   const { toPDF, targetRef } = usePDF({filename: 'page.pdf'});
@@ -99,7 +100,8 @@ const ResumeBuilder = () => {
       document.title = data.title || "Resume Builder";
     } catch (err) {
       console.error(err);
-      alert("Error loading resume: " + err.message);
+      // alert("Error loading resume: " + err.message);
+      toast.error("Error loading resume: " + err.message);
     }
   };
 
@@ -245,10 +247,12 @@ const ResumeBuilder = () => {
 
                     if (resumeData.id) {
                       res = await updateResume(resumeData);
-                      alert(`Resume "${res.title}" updated successfully!`);
+                      // alert(`Resume "${res.title}" updated successfully!`);
+                      toast.success(`Resume "${res.title}" updated successfully!`);
                     } else {
                       res = await createResume(resumeData);
-                      alert(`Resume "${res.title}" created successfully!`);
+                      // alert(`Resume "${res.title}" created successfully!`);
+                      toast.success(`Resume "${res.title}" created successfully!`);
                       setResumeData((prev) => ({ ...prev, id: res.id }));
                     }
 
@@ -261,7 +265,8 @@ const ResumeBuilder = () => {
                       msg = err.response.data.detail;
                     else if (err.message) msg = err.message;
 
-                    alert(msg);
+                    // alert(msg);
+                    toast.error(msg);
                   }
                 }}
                 className="bg-gradient-to-br from-green-100 to-green-200 ring-green-300 text-green-600 hover:ring-green-400 transition-all rounded-md px-6 py-2 mt-6 text-sm"

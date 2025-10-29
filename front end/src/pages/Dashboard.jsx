@@ -12,6 +12,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createResume } from "../utils/api";
+import { toast } from "react-hot-toast";
 
 const Dashboard = () => {
   const colors = ["#9333ea", "#d97706", "#dc2626", "#0284c7", "#16a34a"];
@@ -35,7 +36,8 @@ const Dashboard = () => {
   try {
     const token = getCookie("access_token");
     if (!token) {
-      alert("Authentication failed. Please log in again.");
+      // alert("Authentication failed. Please log in again.");
+      toast.error("Authentication failed. Please log in again.");
       navigate("/app/login");
       return;
     }
@@ -51,7 +53,8 @@ const Dashboard = () => {
 
     if (!res.ok) {
       if (res.status === 401) {
-        alert("Session expired. Please log in again.");
+        // alert("Session expired. Please log in again.");
+        toast.error("Session expired. Please log in again.");
         document.cookie = "access_token=; path=/; max-age=0; SameSite=Lax;";
         navigate("/app/login");
       } else {
@@ -64,7 +67,8 @@ const Dashboard = () => {
     setAllResumes(data);
   } catch (err) {
     console.error(err);
-    alert("Error loading resumes: " + err.message);
+    // alert("Error loading resumes: " + err.message);
+    toast.error("Error loading resumes: " + err.message);
   }
 };
 
@@ -101,7 +105,8 @@ const Dashboard = () => {
       navigate(`/app/builder/${newResume.id}`);
     } catch (err) {
       console.error("Error creating resume:", err);
-      alert("Failed to create resume: " + (err.detail || err.message));
+      // alert("Failed to create resume: " + (err.detail || err.message));
+      toast.error("Failed to create resume: " + (err.detail || err.message));
     }
   };
 
@@ -115,40 +120,101 @@ const Dashboard = () => {
     event.preventDefault();
   };
 
+  // const delResume = async (resumeId) => {
+  //   const confirmDelete = window.confirm(
+  //     "Are you sure you want to delete this resume?"
+  //   );
+  //   if (!confirmDelete) return;
+
+  //   const token = getCookie("access_token");
+  //   if (!token) {
+  //     // alert("Authentication failed. Please log in again.");
+  //     toast.error("Authentication failed. Please log in again.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const res = await fetch(`http://localhost:8000/resumes/${resumeId}`, {
+  //       method: "DELETE",
+  //       credentials: "include",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "Authorization": `Bearer ${token}`,
+  //       },
+  //     });
+
+  //     if (!res.ok) {
+  //       const errData = await res.json();
+  //       throw new Error(errData.detail || "Failed to delete resume");
+  //     }
+
+  //     setAllResumes((prev) => prev.filter((resume) => resume.id !== resumeId));
+  //     // alert("Resume deleted successfully");
+  //     toast.success("Resume deleted successfully");
+  //   } catch (err) {
+  //     console.error(err);
+  //     // alert("Error deleting resume: " + err.message);
+  //     toast.error("Error deleting resume: " + err.message);
+  //   }
+  // };
+
   const delResume = async (resumeId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this resume?"
-    );
-    if (!confirmDelete) return;
+  // show a custom confirmation toast
+  toast.custom((t) => (
+    <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 p-4 rounded-xl shadow-lg flex flex-col gap-3 items-center">
+      <p className="text-gray-800 dark:text-gray-100 text-sm">
+        Are you sure you want to delete this resume?
+      </p>
+      <div className="flex gap-3">
+        <button
+          onClick={async () => {
+            toast.dismiss(t.id); // close the confirmation toast
+            await handleDelete(resumeId);
+          }}
+          className="px-3 py-1.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600"
+        >
+          Yes, Delete
+        </button>
+        <button
+          onClick={() => toast.dismiss(t.id)}
+          className="px-3 py-1.5 rounded-lg bg-gray-200 dark:bg-neutral-700 text-gray-800 dark:text-gray-100 text-sm font-semibold hover:bg-gray-300 dark:hover:bg-neutral-600"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  ));
+};
 
-    const token = getCookie("access_token");
-    if (!token) {
-      alert("Authentication failed. Please log in again.");
-      return;
+const handleDelete = async (resumeId) => {
+  const token = getCookie("access_token");
+  if (!token) {
+    toast.error("Authentication failed. Please log in again.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`http://localhost:8000/resumes/${resumeId}`, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.detail || "Failed to delete resume");
     }
 
-    try {
-      const res = await fetch(`http://localhost:8000/resumes/${resumeId}`, {
-        method: "DELETE",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.detail || "Failed to delete resume");
-      }
-
-      setAllResumes((prev) => prev.filter((resume) => resume.id !== resumeId));
-      alert("Resume deleted successfully");
-    } catch (err) {
-      console.error(err);
-      alert("Error deleting resume: " + err.message);
-    }
-  };
+    setAllResumes((prev) => prev.filter((resume) => resume.id !== resumeId));
+    toast.success("Resume deleted successfully!");
+  } catch (err) {
+    console.error(err);
+    toast.error(`Error deleting resume: ${err.message}`);
+  }
+};
 
   useEffect(() => {
     loadAllResumes();

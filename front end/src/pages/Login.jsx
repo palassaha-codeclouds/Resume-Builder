@@ -1,6 +1,7 @@
 import React from "react";
 import { Lock, Mail, User2Icon } from "lucide-react";
 import { loginUser, registerUser } from "../utils/api";
+import { toast } from "react-hot-toast";
 
 const Login = () => {
     const query = new URLSearchParams(window.location.search);
@@ -25,20 +26,30 @@ const Login = () => {
             if (state === "login") {
                 const res = await loginUser(formData);
                 if (res.status === 200) {
-                    alert("Login successful");
+                    // alert("Login successful");
+                    toast.success("Login successful!");
                     console.log("User:", res.data);
-                    window.location.href = "/app/dashboard"; // redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = "/app/dashboard";
+                    }, 1000);
                 }
             } else {
                 const res = await registerUser(formData);
                 if (res.status === 201) {
-                    alert("Registration successful");
+                    // alert("Registration successful");
+                    toast.success("Registration successful!");
                     setState("login");
                 }
             }
         } catch (err) {
             console.error("Error:", err);
-            alert(err.detail || err.message || "Something went wrong");
+            // alert(err.detail || err.message || "Something went wrong");
+            const errorMessage =
+                err?.detail ||
+                err?.message ||
+                "Something went wrong";
+
+            toast.error(errorMessage);
         }
     };
 
