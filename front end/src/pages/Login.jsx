@@ -43,11 +43,18 @@ const Login = () => {
             }
         } catch (err) {
             console.error("Error:", err);
-            // alert(err.detail || err.message || "Something went wrong");
-            const errorMessage =
-                err?.detail ||
-                err?.message ||
-                "Something went wrong";
+
+            let errorMessage = "Something went wrong";
+
+            if (err?.detail) {
+                if (Array.isArray(err.detail)) {
+                    errorMessage = err.detail.map(e => e.msg).join(", ");
+                } else if (typeof err.detail === "string") {
+                    errorMessage = err.detail;
+                }
+            } else if (err?.message) {
+                errorMessage = err.message;
+            }
 
             toast.error(errorMessage);
         }
