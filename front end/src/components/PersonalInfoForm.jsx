@@ -53,14 +53,17 @@ const PersonalInfoForm = ({ data, onChange }) => {
         break;
 
       case "linkedin":
-        if (value && !/^https?:\/\/(www\.)?linkedin\.com\/.*$/.test(value)) {
+        if (
+          value &&
+          !/^https?:\/\/(www\.)?([a-z]{2,3}\.)?linkedin\.com\/.*$/i.test(value)
+        ) {
           toast.error("Enter a valid LinkedIn URL");
           return false;
         }
         break;
 
       case "website":
-        if (value && !/^https?:\/\/[^\s$.?#].[^\s]*$/.test(value)) {
+        if (value && !/^https?:\/\/[^\s$.?#].[^\s]*$/i.test(value)) {
           toast.error("Enter a valid website URL");
           return false;
         }
@@ -71,6 +74,47 @@ const PersonalInfoForm = ({ data, onChange }) => {
     }
     return true;
   };
+
+  const validatePersonalInfo = () => {
+    const { full_name, email, phone, linkedin, website } = data || {};
+
+    if (!full_name?.trim()) {
+      toast.error("Full Name is required");
+      return false;
+    }
+
+    if (!email?.trim()) {
+      toast.error("Email Address is required");
+      return false;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Enter a valid email address");
+      return false;
+    }
+
+    if (phone && !/^\d{10}$/.test(phone)) {
+      toast.error("Phone number must be 10 digits");
+      return false;
+    }
+
+    if (
+      linkedin &&
+      !/^https?:\/\/(www\.)?([a-z]{2,3}\.)?linkedin\.com\/.*$/i.test(linkedin)
+    ) {
+      toast.error("Enter a valid LinkedIn URL");
+      return false;
+    }
+
+    if (website && !/^https?:\/\/[^\s$.?#].[^\s]*$/i.test(website)) {
+      toast.error("Enter a valid website URL");
+      return false;
+    }
+
+    return true;
+  };
+
+  PersonalInfoForm.validate = validatePersonalInfo;
 
   return (
     <div>

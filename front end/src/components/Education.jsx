@@ -1,8 +1,8 @@
 import { GraduationCap, Plus, Trash2 } from "lucide-react";
 import React from "react";
+import toast from "react-hot-toast";
 
 const Education = ({ data, onChange }) => {
-
     const addEducation = () => {
         const newEducation = {
             institution: "",
@@ -24,6 +24,84 @@ const Education = ({ data, onChange }) => {
         updated[index] = { ...updated[index], [field]: value };
         onChange(updated);
     };
+
+    const validateField = (field, value, education) => {
+        switch (field) {
+            case "institution":
+                if (!value.trim()) {
+                    toast.error("Institution name is required");
+                    return false;
+                }
+                break;
+
+            case "degree":
+                if (!value.trim()) {
+                    toast.error("Degree is required");
+                    return false;
+                }
+                break;
+
+            case "field":
+                if (!value.trim()) {
+                    toast.error("Field of study is required");
+                    return false;
+                }
+                break;
+
+            case "graduation_date":
+                if (!value) {
+                    toast.error("Graduation date is required");
+                    return false;
+                }
+                break;
+
+            case "gpa":
+                if (value && !/^\d+(\.\d+)?$/.test(value)) {
+                    toast.error("GPA must be a numeric value");
+                    return false;
+                }
+                const gpaValue = parseFloat(value);
+                if (value && (gpaValue < 0 || gpaValue > 10)) {
+                    toast.error("GPA must be between 0 and 10");
+                    return false;
+                }
+                break;
+
+            default:
+                break;
+        }
+        return true;
+    };
+
+    const validateEducation = () => {
+        if (!data || data.length === 0) return true;
+
+        for (const edu of data) {
+            if (!edu.institution?.trim()) {
+                toast.error("Institution name is required");
+                return false;
+            }
+            if (!edu.degree?.trim()) {
+                toast.error(`Degree is required for "${edu.institution || "an entry"}"`);
+                return false;
+            }
+            if (!edu.field?.trim()) {
+                toast.error(`Field of study is required for "${edu.institution || "an entry"}"`);
+                return false;
+            }
+            if (!edu.graduation_date) {
+                toast.error(`Graduation date is required for "${edu.institution || "an entry"}"`);
+                return false;
+            }
+            if (edu.gpa && (!/^\d+(\.\d+)?$/.test(edu.gpa) || edu.gpa < 0 || edu.gpa > 10)) {
+                toast.error(`Invalid GPA for "${edu.institution || "an entry"}"`);
+                return false;
+            }
+        }
+        return true;
+    };
+
+    Education.validate = validateEducation;
 
     return (
         <div className="space-y-6">
@@ -73,8 +151,11 @@ const Education = ({ data, onChange }) => {
                                     onChange={(e) =>
                                         updateEducation(index, "institution", e.target.value)
                                     }
+                                    onBlur={(e) =>
+                                        validateField("institution", e.target.value, education)
+                                    }
                                     type="text"
-                                    placeholder="Institute Name"
+                                    placeholder="Institute Name *"
                                     className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500"
                                 />
 
@@ -83,8 +164,11 @@ const Education = ({ data, onChange }) => {
                                     onChange={(e) =>
                                         updateEducation(index, "degree", e.target.value)
                                     }
+                                    onBlur={(e) =>
+                                        validateField("degree", e.target.value, education)
+                                    }
                                     type="text"
-                                    placeholder="Degree (eg. B.Sc, M.A)"
+                                    placeholder="Degree (e.g. B.Sc, M.A) *"
                                     className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500"
                                 />
 
@@ -93,8 +177,11 @@ const Education = ({ data, onChange }) => {
                                     onChange={(e) =>
                                         updateEducation(index, "field", e.target.value)
                                     }
+                                    onBlur={(e) =>
+                                        validateField("field", e.target.value, education)
+                                    }
                                     type="text"
-                                    placeholder="Field of Study"
+                                    placeholder="Field of Study *"
                                     className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500"
                                 />
 
@@ -103,15 +190,17 @@ const Education = ({ data, onChange }) => {
                                     onChange={(e) =>
                                         updateEducation(index, "graduation_date", e.target.value)
                                     }
+                                    onBlur={(e) =>
+                                        validateField("graduation_date", e.target.value, education)
+                                    }
                                     type="month"
                                     className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500"
                                 />
 
                                 <input
                                     value={education.gpa || ""}
-                                    onChange={(e) =>
-                                        updateEducation(index, "gpa", e.target.value)
-                                    }
+                                    onChange={(e) => updateEducation(index, "gpa", e.target.value)}
+                                    onBlur={(e) => validateField("gpa", e.target.value, education)}
                                     type="text"
                                     placeholder="GPA"
                                     className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500"
@@ -122,7 +211,7 @@ const Education = ({ data, onChange }) => {
                 </div>
             )}
         </div>
-    )
-}
+    );
+};
 
-export default Education
+export default Education;

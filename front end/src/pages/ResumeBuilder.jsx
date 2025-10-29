@@ -32,7 +32,7 @@ import html2pdf from 'html2pdf.js';
 import toast from "react-hot-toast";
 
 const ResumeBuilder = () => {
-  const { toPDF, targetRef } = usePDF({filename: 'page.pdf'});
+  const { toPDF, targetRef } = usePDF({ filename: 'page.pdf' });
   const { resumeId } = useParams();
 
   const [resumeData, setResumeData] = useState({
@@ -102,7 +102,6 @@ const ResumeBuilder = () => {
       document.title = data.title || "Resume Builder";
     } catch (err) {
       console.error(err);
-      // alert("Error loading resume: " + err.message);
       toast.error("Error loading resume: " + err.message);
     }
   };
@@ -112,16 +111,16 @@ const ResumeBuilder = () => {
   }, [resumeId]);
 
   const downloadResume = () => {
-  const element = targetRef.current;
-  const opt = {
-    margin: 10,
-    filename: 'resume.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+    const element = targetRef.current;
+    const opt = {
+      margin: 10,
+      filename: 'resume.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+    };
+    html2pdf().set(opt).from(element).save();
   };
-  html2pdf().set(opt).from(element).save();
-};
 
   return (
     <div>
@@ -143,9 +142,8 @@ const ResumeBuilder = () => {
               <hr
                 className="absolute top-0 left-0 h-1 bg-gradient-to-r from-teal-500 to-teal-600 border-none transition-all duration-2000"
                 style={{
-                  width: `${
-                    (activeSectionIndex * 100) / (sections.length - 1)
-                  }%`,
+                  width: `${(activeSectionIndex * 100) / (sections.length - 1)
+                    }%`,
                 }}
               />
 
@@ -250,16 +248,28 @@ const ResumeBuilder = () => {
 
               <button
                 onClick={async () => {
+                  const validPersonal = PersonalInfoForm.validate?.(
+                    resumeData.personal_info
+                  );
+                  const validExperience = Experience.validate?.(resumeData.experience);
+                  const validEducation = Education.validate?.(resumeData.education);
+                  const validProject = Project.validate?.(resumeData.projects);
+                  const validSkill = Skills.validate?.(resumeData.skills);
+
+                  if (validPersonal === false || validExperience === false || validEducation === false || validProject === false || validSkill === false) {
+                    // toast.error("Please fix validation errors before saving.");
+                    comsole.log("Validation failed:");
+                    return;
+                  }
+
                   try {
                     let res;
 
                     if (resumeData.id) {
                       res = await updateResume(resumeData);
-                      // alert(`Resume "${res.title}" updated successfully!`);
                       toast.success(`Resume "${res.title}" updated successfully!`);
                     } else {
                       res = await createResume(resumeData);
-                      // alert(`Resume "${res.title}" created successfully!`);
                       toast.success(`Resume "${res.title}" created successfully!`);
                       setResumeData((prev) => ({ ...prev, id: res.id }));
                     }
@@ -273,10 +283,10 @@ const ResumeBuilder = () => {
                       msg = err.response.data.detail;
                     else if (err.message) msg = err.message;
 
-                    // alert(msg);
                     toast.error(msg);
                   }
                 }}
+
                 className="bg-gradient-to-br from-green-100 to-green-200 ring-green-300 text-green-600 hover:ring-green-400 transition-all rounded-md px-6 py-2 mt-6 text-sm"
               >
                 Save Changes

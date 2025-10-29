@@ -1,5 +1,6 @@
 import { Plus, Trash2 } from "lucide-react";
 import React from "react";
+import toast from "react-hot-toast";
 
 const Project = ({ data, onChange }) => {
 
@@ -22,6 +23,37 @@ const Project = ({ data, onChange }) => {
         updated[index] = { ...updated[index], [field]: value };
         onChange(updated);
     };
+
+    const validateField = (field, value) => {
+        if (!value.trim()) {
+            toast.error(`${field.replace("_", " ")} is required`);
+            return false;
+        }
+        return true;
+    };
+
+    const validateProjects = () => {
+        let valid = true;
+
+        for (const [index, project] of data.entries()) {
+            if (!project.name?.trim()) {
+                toast.error(`Project #${index + 1}: Name is required`);
+                valid = false;
+            }
+            if (!project.type?.trim()) {
+                toast.error(`Project #${index + 1}: Type is required`);
+                valid = false;
+            }
+            if (!project.description?.trim()) {
+                toast.error(`Project #${index + 1}: Description is required`);
+                valid = false;
+            }
+        }
+
+        return valid;
+    };
+
+    Project.validate = validateProjects;
 
     return (
         <div className="space-y-6">
@@ -64,6 +96,9 @@ const Project = ({ data, onChange }) => {
                                 onChange={(e) =>
                                     updateProject(index, "name", e.target.value)
                                 }
+                                onBlur={(e) =>
+                                    validateField("Project Name", e.target.value)
+                                }
                                 type="text"
                                 placeholder="Project Name"
                                 className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500"
@@ -73,6 +108,9 @@ const Project = ({ data, onChange }) => {
                                 value={project.type || ""}
                                 onChange={(e) =>
                                     updateProject(index, "type", e.target.value)
+                                }
+                                onBlur={(e) =>
+                                    validateField("Project Type", e.target.value)
                                 }
                                 type="text"
                                 placeholder="Project Type"
@@ -85,6 +123,9 @@ const Project = ({ data, onChange }) => {
                                 onChange={(e) =>
                                     updateProject(index, "description", e.target.value)
                                 }
+                                onBlur={(e) =>
+                                    validateField("Project Description", e.target.value)
+                                }
                                 placeholder="Project Description"
                                 className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500"
                             />
@@ -96,4 +137,4 @@ const Project = ({ data, onChange }) => {
     )
 }
 
-export default Project
+export default Project;

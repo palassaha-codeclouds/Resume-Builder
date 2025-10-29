@@ -1,23 +1,33 @@
 import { Plus, Sparkles, X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 const Skills = ({ data = [], onChange }) => {
     const [newSkill, setNewSkill] = useState("");
-
     const [skillsData, setSkillsData] = useState(data);
 
+    useEffect(() => {
+        onChange(skillsData);
+    }, [skillsData]);
+
     const addSkill = () => {
-        if (newSkill.trim() && !skillsData.includes(newSkill.trim())) {
-            setSkillsData([...skillsData, { skill_name: newSkill.trim() }]);
-            onChange([...skillsData, newSkill.trim()]);
+        const skillTrimmed = newSkill.trim();
+        if (skillTrimmed) {
+            if (skillsData.some(s => s.skill_name === skillTrimmed)) {
+                toast.error("This skill is already added");
+                return;
+            }
+            const updated = [...skillsData, { skill_name: skillTrimmed }];
+            setSkillsData(updated);
             setNewSkill("");
+        } else {
+            toast.error("Skill cannot be empty");
         }
     };
 
     const removeSkill = (indexToRemove) => {
         const updated = skillsData.filter((_, index) => index !== indexToRemove);
         setSkillsData(updated);
-        onChange(updated);
     };
 
     const handleKeyPress = (e) => {
@@ -26,6 +36,16 @@ const Skills = ({ data = [], onChange }) => {
             addSkill();
         }
     };
+
+    const validateSkills = () => {
+        if (!skillsData.length) {
+            toast.error("Add at least one skill");
+            return false;
+        }
+        return true;
+    };
+
+    Skills.validate = validateSkills;
 
     return (
         <div className="space-y-5">
@@ -38,7 +58,7 @@ const Skills = ({ data = [], onChange }) => {
                 </p>
             </div>
 
-            <div className="flex gap-2 ">
+            <div className="flex gap-2">
                 <input
                     type="text"
                     placeholder="Enter a skill"

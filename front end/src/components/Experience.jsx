@@ -1,5 +1,6 @@
 import { Briefcase, Plus, Sparkles, Trash2 } from "lucide-react";
 import React from "react";
+import toast from "react-hot-toast";
 
 const Experience = ({ data, onChange }) => {
     const addExperience = () => {
@@ -25,6 +26,91 @@ const Experience = ({ data, onChange }) => {
         onChange(updated);
     };
 
+    const validateField = (field, value, experience) => {
+        switch (field) {
+            case "company":
+                if (!value.trim()) {
+                    toast.error("Company name is required");
+                    return false;
+                }
+                break;
+
+            case "position":
+                if (!value.trim()) {
+                    toast.error("Job title is required");
+                    return false;
+                }
+                break;
+
+            case "start_date":
+                if (!value) {
+                    toast.error("Start date is required");
+                    return false;
+                }
+                break;
+
+            case "end_date":
+                if (!experience.is_current && !value) {
+                    toast.error("End date is required unless marked as current job");
+                    return false;
+                }
+                if (
+                    experience.start_date &&
+                    value &&
+                    new Date(value) < new Date(experience.start_date)
+                ) {
+                    toast.error("End date cannot be before start date");
+                    return false;
+                }
+                break;
+
+            default:
+                break;
+        }
+        return true;
+    };
+
+    const validateExperience = () => {
+        if (!data || data.length === 0) return true;
+
+        for (const exp of data) {
+            const { company, position, start_date, end_date, is_current } = exp;
+
+            if (!company.trim()) {
+                toast.error("Please enter the company name for all experiences.");
+                return false;
+            }
+
+            if (!position.trim()) {
+                toast.error(`Please enter the job title for "${company}".`);
+                return false;
+            }
+
+            if (!start_date) {
+                toast.error(`Start date is missing for "${position}" at "${company}".`);
+                return false;
+            }
+
+            if (!is_current && !end_date) {
+                toast.error(
+                    `End date is required for "${position}" at "${company}".`
+                );
+                return false;
+            }
+
+            if (end_date && new Date(end_date) < new Date(start_date)) {
+                toast.error(
+                    `End date cannot be before start date for "${position}" at "${company}".`
+                );
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    Experience.validate = validateExperience;
+
     return (
         <div className="space-y-6">
             <div className="flex items-start justify-between">
@@ -32,7 +118,9 @@ const Experience = ({ data, onChange }) => {
                     <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
                         Professional Experience
                     </h3>
-                    <p className="text-sm text-gray-500">Add your job experience.</p>
+                    <p className="text-sm text-gray-500">
+                        Add your job experience (optional).
+                    </p>
                 </div>
 
                 <button
@@ -73,8 +161,11 @@ const Experience = ({ data, onChange }) => {
                                     onChange={(e) =>
                                         updateExperience(index, "company", e.target.value)
                                     }
+                                    onBlur={(e) =>
+                                        validateField("company", e.target.value, experience)
+                                    }
                                     type="text"
-                                    placeholder="Company Name"
+                                    placeholder="Company Name *"
                                     className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500"
                                 />
 
@@ -83,8 +174,11 @@ const Experience = ({ data, onChange }) => {
                                     onChange={(e) =>
                                         updateExperience(index, "position", e.target.value)
                                     }
+                                    onBlur={(e) =>
+                                        validateField("position", e.target.value, experience)
+                                    }
                                     type="text"
-                                    placeholder="Job Title"
+                                    placeholder="Job Title *"
                                     className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500"
                                 />
 
@@ -92,6 +186,9 @@ const Experience = ({ data, onChange }) => {
                                     value={experience.start_date || ""}
                                     onChange={(e) =>
                                         updateExperience(index, "start_date", e.target.value)
+                                    }
+                                    onBlur={(e) =>
+                                        validateField("start_date", e.target.value, experience)
                                     }
                                     type="month"
                                     className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500"
@@ -101,6 +198,9 @@ const Experience = ({ data, onChange }) => {
                                     value={experience.end_date || ""}
                                     onChange={(e) =>
                                         updateExperience(index, "end_date", e.target.value)
+                                    }
+                                    onBlur={(e) =>
+                                        validateField("end_date", e.target.value, experience)
                                     }
                                     type="month"
                                     disabled={experience.is_current}
@@ -112,13 +212,9 @@ const Experience = ({ data, onChange }) => {
                                 <input
                                     type="checkbox"
                                     checked={experience.is_current || false}
-                                    onChange={(e) => {
-                                        updateExperience(
-                                            index,
-                                            "is_current",
-                                            e.target.checked ? true : false
-                                        );
-                                    }}
+                                    onChange={(e) =>
+                                        updateExperience(index, "is_current", e.target.checked)
+                                    }
                                     className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                                 />
                                 <span className="text-sm text-gray-700">
