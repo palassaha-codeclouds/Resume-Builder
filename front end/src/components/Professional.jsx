@@ -1,7 +1,30 @@
 import { Sparkles } from "lucide-react";
-import React from "react";
+import React, { useState, useEffect, useImperativeHandle, forwardRef } from "react";
+import toast from "react-hot-toast";
 
-const Professional = ({ data, onChange, setResumeData }) => {
+const Professional = forwardRef(({ data = "", onChange }, ref) => {
+    const [summary, setSummary] = useState(data);
+
+    useEffect(() => {
+        onChange(summary);
+    }, [summary]);
+
+    useImperativeHandle(ref, () => ({
+        validate: () => {
+            if (!summary?.trim()) {
+                toast.error("Professional summary cannot be empty");
+                return false;
+            }
+            return true;
+        }
+    }));
+
+    const handleBlur = (e) => {
+        if (!e.target.value.trim()) {
+            toast.error("Professional summary cannot be empty");
+        }
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex items-start justify-between">
@@ -22,8 +45,9 @@ const Professional = ({ data, onChange, setResumeData }) => {
 
             <div>
                 <textarea
-                    value={data || ""}
-                    onChange={(e) => onChange(e.target.value)}
+                    value={summary}
+                    onChange={(e) => setSummary(e.target.value)}
+                    onBlur={handleBlur}
                     rows={7}
                     className="w-full p-3 border text-sm border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all resize-none"
                     placeholder="Write a professional summary that highlights your experience and achievements..."
@@ -35,6 +59,6 @@ const Professional = ({ data, onChange, setResumeData }) => {
             </div>
         </div>
     );
-};
+});
 
 export default Professional;

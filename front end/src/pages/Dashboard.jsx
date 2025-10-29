@@ -159,7 +159,6 @@ const Dashboard = () => {
   // };
 
   const delResume = async (resumeId) => {
-  // show a custom confirmation toast
   toast.custom((t) => (
     <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 p-4 rounded-xl shadow-lg flex flex-col gap-3 items-center">
       <p className="text-gray-800 dark:text-gray-100 text-sm">
@@ -168,7 +167,7 @@ const Dashboard = () => {
       <div className="flex gap-3">
         <button
           onClick={async () => {
-            toast.dismiss(t.id); // close the confirmation toast
+            toast.dismiss(t.id);
             await handleDelete(resumeId);
           }}
           className="px-3 py-1.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600"

@@ -251,14 +251,15 @@ const ResumeBuilder = () => {
                   const validPersonal = PersonalInfoForm.validate?.(
                     resumeData.personal_info
                   );
+                  const validProfessional = Professional.validate?.(resumeData.professional_summary);
                   const validExperience = Experience.validate?.(resumeData.experience);
                   const validEducation = Education.validate?.(resumeData.education);
                   const validProject = Project.validate?.(resumeData.projects);
                   const validSkill = Skills.validate?.(resumeData.skills);
 
-                  if (validPersonal === false || validExperience === false || validEducation === false || validProject === false || validSkill === false) {
+                  if (validPersonal === false || validExperience === false || validEducation === false || validProject === false || validSkill === false || validProfessional === false) {
                     // toast.error("Please fix validation errors before saving.");
-                    comsole.log("Validation failed:");
+                    console.log("Validation failed:");
                     return;
                   }
 

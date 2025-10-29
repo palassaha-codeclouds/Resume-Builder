@@ -16,7 +16,7 @@ const ResumePreview = ({ data, template, accentColor, classes = "", ...props }) 
     template: data.template || "classic",
     accent_color: data.accent_color || "#314158",
     public: data.public || false,
-    ...data, // keep any other fields
+    ...data,
   };
 
   const renderTemplate = () => {
