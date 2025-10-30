@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createResume } from "../utils/api";
 import { toast } from "react-hot-toast";
+import Loader from "../components/Loader";
 
 const Dashboard = () => {
   const colors = ["#9333ea", "#d97706", "#dc2626", "#0284c7", "#16a34a"];
@@ -33,45 +34,44 @@ const Dashboard = () => {
   };
 
   const loadAllResumes = async () => {
-  try {
-    const token = getCookie("access_token");
-    if (!token) {
-      // alert("Authentication failed. Please log in again.");
-      toast.error("Authentication failed. Please log in again.");
-      navigate("/app/login");
-      return;
-    }
-
-    const res = await fetch("http://localhost:8000/resumes/", {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-    });
-
-    if (!res.ok) {
-      if (res.status === 401) {
-        // alert("Session expired. Please log in again.");
-        toast.error("Session expired. Please log in again.");
-        document.cookie = "access_token=; path=/; max-age=0; SameSite=Lax;";
+    try {
+      const token = getCookie("access_token");
+      if (!token) {
+        // alert("Authentication failed. Please log in again.");
+        toast.error("Authentication failed. Please log in again.");
         navigate("/app/login");
-      } else {
-        throw new Error("Failed to fetch resumes");
+        return;
       }
-      return;
+
+      const res = await fetch("http://localhost:8000/resumes/", {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          // alert("Session expired. Please log in again.");
+          toast.error("Session expired. Please log in again.");
+          document.cookie = "access_token=; path=/; max-age=0; SameSite=Lax;";
+          navigate("/app/login");
+        } else {
+          throw new Error("Failed to fetch resumes");
+        }
+        return;
+      }
+
+      const data = await res.json();
+      setAllResumes(data);
+    } catch (err) {
+      console.error(err);
+      // alert("Error loading resumes: " + err.message);
+      toast.error("Error loading resumes: " + err.message);
     }
-
-    const data = await res.json();
-    setAllResumes(data);
-  } catch (err) {
-    console.error(err);
-    // alert("Error loading resumes: " + err.message);
-    toast.error("Error loading resumes: " + err.message);
-  }
-};
-
+  };
 
   const createResumeHandler = async (event) => {
     event.preventDefault();
@@ -159,64 +159,71 @@ const Dashboard = () => {
   // };
 
   const delResume = async (resumeId) => {
-  toast.custom((t) => (
-    <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 p-4 rounded-xl shadow-lg flex flex-col gap-3 items-center">
-      <p className="text-gray-800 dark:text-gray-100 text-sm">
-        Are you sure you want to delete this resume?
-      </p>
-      <div className="flex gap-3">
-        <button
-          onClick={async () => {
-            toast.dismiss(t.id);
-            await handleDelete(resumeId);
-          }}
-          className="px-3 py-1.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600"
-        >
-          Yes, Delete
-        </button>
-        <button
-          onClick={() => toast.dismiss(t.id)}
-          className="px-3 py-1.5 rounded-lg bg-gray-200 dark:bg-neutral-700 text-gray-800 dark:text-gray-100 text-sm font-semibold hover:bg-gray-300 dark:hover:bg-neutral-600"
-        >
-          Cancel
-        </button>
+    toast.custom((t) => (
+      <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 p-4 rounded-xl shadow-lg flex flex-col gap-3 items-center">
+        <p className="text-gray-800 dark:text-gray-100 text-sm">
+          Are you sure you want to delete this resume?
+        </p>
+        <div className="flex gap-3">
+          <button
+            onClick={async () => {
+              toast.dismiss(t.id);
+              await handleDelete(resumeId);
+            }}
+            className="px-3 py-1.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600"
+          >
+            Yes, Delete
+          </button>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1.5 rounded-lg bg-gray-200 dark:bg-neutral-700 text-gray-800 dark:text-gray-100 text-sm font-semibold hover:bg-gray-300 dark:hover:bg-neutral-600"
+          >
+            Cancel
+          </button>
+        </div>
       </div>
-    </div>
-  ));
-};
+    ));
+  };
 
-const handleDelete = async (resumeId) => {
-  const token = getCookie("access_token");
-  if (!token) {
-    toast.error("Authentication failed. Please log in again.");
-    return;
-  }
-
-  try {
-    const res = await fetch(`http://localhost:8000/resumes/${resumeId}`, {
-      method: "DELETE",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!res.ok) {
-      const errData = await res.json();
-      throw new Error(errData.detail || "Failed to delete resume");
+  const handleDelete = async (resumeId) => {
+    const token = getCookie("access_token");
+    if (!token) {
+      toast.error("Authentication failed. Please log in again.");
+      return;
     }
 
-    setAllResumes((prev) => prev.filter((resume) => resume.id !== resumeId));
-    toast.success("Resume deleted successfully!");
-  } catch (err) {
-    console.error(err);
-    toast.error(`Error deleting resume: ${err.message}`);
-  }
-};
+    try {
+      const res = await fetch(`http://localhost:8000/resumes/${resumeId}`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.detail || "Failed to delete resume");
+      }
+
+      setAllResumes((prev) => prev.filter((resume) => resume.id !== resumeId));
+      toast.success("Resume deleted successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error(`Error deleting resume: ${err.message}`);
+    }
+  };
+
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    loadAllResumes();
+    async function loadResumes() {
+      setIsLoading(true);
+      await loadAllResumes();
+      setIsLoading(false);
+    }
+    loadResumes();
   }, []);
 
   return (
@@ -236,69 +243,73 @@ const handleDelete = async (resumeId) => {
               Create Resume
             </p>
           </button>
-
+          {/* 
           <button
             onClick={() => setShowUploadResume(true)}
             className="w-full bg-white sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 text-slate-600 border border-dashed border-slate-300 group hover:border-teal-700 hover:shadow-lg transition-all duration-300 cursor-pointer"
           >
-            <UploadCloudIcon className="size-11 transition-all duration-300 p-2.5 bg-gradient-to-br from-teal-500 to-teal-700 text-white rounded-full" />
+          <UploadCloudIcon className="size-11 transition-all duration-300 p-2.5 bg-gradient-to-br from-teal-500 to-teal-700 text-white rounded-full" />
             <p className="text-sm group-hover:text-teal-600 transition-all duration-300">
               Upload Existing
             </p>
-          </button>
+          </button> */}
         </div>
 
         <hr className="border-slate-300 my-6 sm:w-[305px]" />
 
-        <div className="grid grid-cols-2 sm:flex flex-wrap gap-4">
-          {allResumes.map((resume, index) => {
-            const baseColor = colors[index % colors.length];
-            return (
-              <button
-                key={index}
-                onClick={() => navigate(`/app/builder/${resume.id}`)}
-                className="relative w-full sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 border group hover:shadow-lg transition-all duration-300 cursor-pointer"
-                style={{
-                  background: `linear-gradient(135deg, ${baseColor}10, ${baseColor}40`,
-                  borderColor: baseColor + "40",
-                }}
-              >
-                <FilePenLineIcon
-                  className="size-7 group-hover:scale-105 transition-all"
-                  style={{ color: baseColor }}
-                />
+        {isLoading && <Loader />}
 
-                <p
-                  className="text-sm group-hover:scale-105 transition-all px-2 text-center"
-                  style={{ color: baseColor }}
+        {!isLoading && (
+          <div className="grid grid-cols-2 sm:flex flex-wrap gap-4">
+            {allResumes.map((resume, index) => {
+              const baseColor = colors[index % colors.length];
+              return (
+                <button
+                  key={index}
+                  onClick={() => navigate(`/app/builder/${resume.id}`)}
+                  className="relative w-full sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 border group hover:shadow-lg transition-all duration-300 cursor-pointer"
+                  style={{
+                    background: `linear-gradient(135deg, ${baseColor}10, ${baseColor}40`,
+                    borderColor: baseColor + "40",
+                  }}
                 >
-                  {resume.title}
-                </p>
+                  <FilePenLineIcon
+                    className="size-7 group-hover:scale-105 transition-all"
+                    style={{ color: baseColor }}
+                  />
 
-                {/* <p
+                  <p
+                    className="text-sm group-hover:scale-105 transition-all px-2 text-center"
+                    style={{ color: baseColor }}
+                  >
+                    {resume.title}
+                  </p>
+
+                  {/* <p
                   className="absolute bottom-1 text-[11px] text-slate-400 group-hover:text-slate-500 transition-all duration-300 px-2 text-center"
                   style={{ color: baseColor + "90" }}
                 >
                   Updated on {new Date(resume.updatedAt).toLocaleDateString()}
                 </p> */}
 
-                <div
-                  on
-                  onClick={(e) => e.stopPropagation()}
-                  className="absolute top-1 right-1 group-hover:flex items-center hidden"
-                >
-                  <TrashIcon
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      delResume(resume.id);
-                    }}
-                    className="size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors"
-                  />
-                </div>
-              </button>
-            );
-          })}
-        </div>
+                  <div
+                    on
+                    onClick={(e) => e.stopPropagation()}
+                    className="absolute top-1 right-1 group-hover:flex items-center hidden"
+                  >
+                    <TrashIcon
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        delResume(resume.id);
+                      }}
+                      className="size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors"
+                    />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {showCreateResume && (
           <form
