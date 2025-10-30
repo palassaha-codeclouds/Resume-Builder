@@ -14,6 +14,7 @@ import {
   Sparkles,
   User,
   Share2Icon,
+  icons,
 } from "lucide-react";
 
 import PersonalInfoForm from "../components/PersonalInfoForm";
@@ -27,12 +28,12 @@ import Skills from "../components/Skills";
 import TemplateForm from "../components/TemplateForm";
 
 import { createResume, updateResume } from "../utils/api";
-import { usePDF } from 'react-to-pdf';
-import html2pdf from 'html2pdf.js';
+import { usePDF } from "react-to-pdf";
+import html2pdf from "html2pdf.js";
 import toast from "react-hot-toast";
 
 const ResumeBuilder = () => {
-  const { toPDF, targetRef } = usePDF({ filename: 'page.pdf' });
+  const { toPDF, targetRef } = usePDF({ filename: "page.pdf" });
   const { resumeId } = useParams();
 
   const [resumeData, setResumeData] = useState({
@@ -110,16 +111,26 @@ const ResumeBuilder = () => {
     loadExistingResume();
   }, [resumeId]);
 
-  const downloadResume = () => {
+  const downloadResume = async () => {
     const element = targetRef.current;
+    element.classList.add("w-[713px]");
+    const icons = targetRef.current.querySelectorAll(".icon-text");
+    icons.forEach((icon) => {
+      icon.classList.add("translate-y-[-7px]", "z-50");
+    });
     const opt = {
       margin: 10,
-      filename: 'resume.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
+      filename: "resume.pdf",
+      image: { type: "jpeg", quality: 0.98 },
       html2canvas: { scale: 2 },
-      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+      jsPDF: { orientation: "portrait", unit: "mm", format: "a4" },
     };
-    html2pdf().set(opt).from(element).save();
+    await html2pdf().set(opt).from(element).save();
+
+    icons.forEach((icon) => {
+      icon.classList.remove("translate-y-[-7px]", "z-50");
+    });
+    element.classList.remove("w-[713px]");
   };
 
   return (
@@ -142,8 +153,9 @@ const ResumeBuilder = () => {
               <hr
                 className="absolute top-0 left-0 h-1 bg-gradient-to-r from-teal-500 to-teal-600 border-none transition-all duration-2000"
                 style={{
-                  width: `${(activeSectionIndex * 100) / (sections.length - 1)
-                    }%`,
+                  width: `${
+                    (activeSectionIndex * 100) / (sections.length - 1)
+                  }%`,
                 }}
               />
 
@@ -251,13 +263,26 @@ const ResumeBuilder = () => {
                   const validPersonal = PersonalInfoForm.validate?.(
                     resumeData.personal_info
                   );
-                  const validProfessional = Professional.validate?.(resumeData.professional_summary);
-                  const validExperience = Experience.validate?.(resumeData.experience);
-                  const validEducation = Education.validate?.(resumeData.education);
+                  const validProfessional = Professional.validate?.(
+                    resumeData.professional_summary
+                  );
+                  const validExperience = Experience.validate?.(
+                    resumeData.experience
+                  );
+                  const validEducation = Education.validate?.(
+                    resumeData.education
+                  );
                   const validProject = Project.validate?.(resumeData.projects);
                   const validSkill = Skills.validate?.(resumeData.skills);
 
-                  if (validPersonal === false || validExperience === false || validEducation === false || validProject === false || validSkill === false || validProfessional === false) {
+                  if (
+                    validPersonal === false ||
+                    validExperience === false ||
+                    validEducation === false ||
+                    validProject === false ||
+                    validSkill === false ||
+                    validProfessional === false
+                  ) {
                     // toast.error("Please fix validation errors before saving.");
                     console.log("Validation failed:");
                     return;
@@ -268,10 +293,14 @@ const ResumeBuilder = () => {
 
                     if (resumeData.id) {
                       res = await updateResume(resumeData);
-                      toast.success(`Resume "${res.title}" updated successfully!`);
+                      toast.success(
+                        `Resume "${res.title}" updated successfully!`
+                      );
                     } else {
                       res = await createResume(resumeData);
-                      toast.success(`Resume "${res.title}" created successfully!`);
+                      toast.success(
+                        `Resume "${res.title}" created successfully!`
+                      );
                       setResumeData((prev) => ({ ...prev, id: res.id }));
                     }
 
@@ -287,7 +316,6 @@ const ResumeBuilder = () => {
                     toast.error(msg);
                   }
                 }}
-
                 className="bg-gradient-to-br from-green-100 to-green-200 ring-green-300 text-green-600 hover:ring-green-400 transition-all rounded-md px-6 py-2 mt-6 text-sm"
               >
                 Save Changes

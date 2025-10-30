@@ -275,12 +275,12 @@ const handleDelete = async (resumeId) => {
                   {resume.title}
                 </p>
 
-                <p
+                {/* <p
                   className="absolute bottom-1 text-[11px] text-slate-400 group-hover:text-slate-500 transition-all duration-300 px-2 text-center"
                   style={{ color: baseColor + "90" }}
                 >
                   Updated on {new Date(resume.updatedAt).toLocaleDateString()}
-                </p>
+                </p> */}
 
                 <div
                   on
