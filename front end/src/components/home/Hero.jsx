@@ -125,7 +125,7 @@ const Hero = () => {
                     <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold max-w-4xl text-center mt-8 sm:mt-10 leading-snug sm:leading-[50px] md:leading-[60px] lg:leading-[70px]">
                         Crack your dream job with{' '}
                         <span className="bg-gradient-to-r from-teal-700 to-teal-600 bg-clip-text text-transparent">
-                            AI-Powered
+                            Perfectly Crafted
                         </span>{' '}
                         resumes.
                     </h1>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getCurrentUser } from "../utils/api"; 
+import { LogOut } from "lucide-react";
 
 const Navbar = () => {
     const [user, setUser] = useState(null); 
@@ -43,8 +44,9 @@ const Navbar = () => {
                     <p className="max-sm:hidden">Hi, {displayUserName}</p>
                     <button
                         onClick={logoutUser}
-                        className="bg-white hover:bg-slate-50 border border-gray-300 px-7 py-1.5 rounded-full active:scale-95 transition-all"
+                        className="bg-white hover:bg-slate-50 border border-gray-300 px-5 py-1.5 rounded-full active:scale-95 transition-all flex gap-x-2 items-center"
                     >
+                        <LogOut size={20}/>
                         Logout
                     </button>
                 </div>

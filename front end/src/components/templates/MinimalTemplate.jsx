@@ -143,7 +143,14 @@ const MinimalTemplate = ({ data = {}, accentColor = "#000" }) => {
                     >
                         Skills
                     </h2>
-                    <div className="text-gray-700">{skills.join(" • ")}</div>
+                    {/* <div className="text-gray-700">{skills.join(" • ")}</div> */}
+                    <div className="flex gap-4 flex-wrap">
+                        {skills.map((skill, index) => (
+                            <div key={index} className="text-gray-700">
+                                • {skill.skill_name || skill || "Skill"}
+                            </div>
+                        ))}
+                    </div>
                 </section>
             )}
         </div>

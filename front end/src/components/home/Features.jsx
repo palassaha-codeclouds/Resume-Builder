@@ -10,9 +10,9 @@ const Features = () => {
             bg: "bg-violet-100",
             border: "border-violet-300",
             iconColor: "stroke-violet-600",
-            title: "Real-Time Analytics",
+            title: "Smart Resume Templates",
             description:
-                "Get instant insights into your finances with live dashboards.",
+                "Choose from modern, ATS-friendly templates designed to highlight your skills and experience.",
             icon: (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -35,9 +35,9 @@ const Features = () => {
             bg: "bg-green-100",
             border: "border-green-300",
             iconColor: "stroke-green-600",
-            title: "Bank-Grade Security",
+            title: "Export in One Click",
             description:
-                "End-to-end encryption, 2FA, compliance with GDPR standards.",
+                "Instantly download your resume in high-quality PDF format without losing layout or styling.",
             icon: (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -60,9 +60,9 @@ const Features = () => {
             bg: "bg-orange-100",
             border: "border-orange-300",
             iconColor: "stroke-orange-600",
-            title: "Customizable Reports",
+            title: "Section-Based Editing",
             description:
-                "Export professional, audit-ready financial reports for tax or internal review.",
+                "Fill and manage all resume sections easily — experience, skills, education, projects, and more.",
             icon: (
                 <svg
                     className="size-6 stroke-orange-600"
