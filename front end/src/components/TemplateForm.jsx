@@ -1,9 +1,13 @@
 import React from "react";
 import { Check, Layout } from "lucide-react";
 
+// Import your template preview PNGs
+import classicPreview from "../assets/classic.png";
+import modernPreview from "../assets/modern.png";
+import minimalPreview from "../assets/minimal.png";
+
 const TemplateForm = ({ data, onChange }) => {
   const handleTemplateSelect = (templateId) => {
-    // Update the main template key so ResumePreview re-renders
     onChange({ ...data, template: templateId });
   };
 
@@ -11,18 +15,21 @@ const TemplateForm = ({ data, onChange }) => {
     {
       id: "classic",
       name: "Classic",
+      image: classicPreview,
       preview:
         "A clean, traditional resume format with clear sections and professional typography.",
     },
     {
       id: "modern",
       name: "Modern",
+      image: modernPreview,
       preview:
         "Sleek design with strategic use of color and modern font choices.",
     },
     {
       id: "minimal",
       name: "Minimal",
+      image: minimalPreview,
       preview: "Ultra-clean design that puts your content front and center.",
     },
   ];
@@ -37,7 +44,7 @@ const TemplateForm = ({ data, onChange }) => {
         Select the template style you want for your resume.
       </p>
 
-      <div className="grid sm:grid-cols-3 gap-4">
+      <div className="grid sm:grid-cols-2 gap-4">
         {templates.map((template) => (
           <div
             key={template.id}
@@ -55,6 +62,13 @@ const TemplateForm = ({ data, onChange }) => {
                 </div>
               </div>
             )}
+
+            {/* Template Preview Image */}
+            <img
+              src={template.image}
+              alt={`${template.name} Preview`}
+              className="w-full object-contain rounded-md mb-3 bg-gray-100"
+            />
 
             <h4 className="font-medium text-gray-800">{template.name}</h4>
             <p className="text-xs text-gray-500 italic mt-1">
