@@ -37,10 +37,10 @@ const Professional = forwardRef(({ data = "", onChange }, ref) => {
                     </p>
                 </div>
 
-                <button className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gradient-to-r from-green-50 to-green-100 text-green-700 border border-green-200 rounded-lg hover:bg-green-200 transition-colors">
+                {/* <button className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gradient-to-r from-green-50 to-green-100 text-green-700 border border-green-200 rounded-lg hover:bg-green-200 transition-colors">
                     <Sparkles className="size-4" />
                     AI Enhance
-                </button>
+                </button> */}
             </div>
 
             <div>

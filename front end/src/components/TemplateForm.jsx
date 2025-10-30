@@ -1,7 +1,6 @@
 import React from "react";
 import { Check, Layout } from "lucide-react";
 
-// Import your template preview PNGs
 import classicPreview from "../assets/classic.png";
 import modernPreview from "../assets/modern.png";
 import minimalPreview from "../assets/minimal.png";
@@ -63,7 +62,6 @@ const TemplateForm = ({ data, onChange }) => {
               </div>
             )}
 
-            {/* Template Preview Image */}
             <img
               src={template.image}
               alt={`${template.name} Preview`}

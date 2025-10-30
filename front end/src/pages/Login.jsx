@@ -133,15 +133,15 @@ const Login = () => {
                     />
                 </div>
 
-                <div className="mt-4 text-left text-teal-600">
+                {/* <div className="mt-4 text-left text-teal-600">
                     <button className="text-sm" type="reset">
                         Forget password?
                     </button>
-                </div>
+                </div> */}
 
                 <button
                     type="submit"
-                    className="mt-2 w-full h-11 rounded-full text-white bg-teal-600 hover:opacity-90 transition-opacity"
+                    className="mt-4 w-full h-11 rounded-full text-white bg-teal-600 hover:opacity-90 transition-opacity"
                 >
                     {state === "login" ? "Login" : "Sign up"}
                 </button>
