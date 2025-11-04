@@ -113,13 +113,17 @@ const ResumeBuilder = () => {
 
   const downloadResume = async () => {
     const element = targetRef.current;
+
     element.classList.add("w-[713px]");
+
     const icons = targetRef.current.querySelectorAll(".icon-text");
+
     icons.forEach((icon) => {
       icon.classList.add("translate-y-[-7px]", "z-50");
     });
+
     const opt = {
-      margin: 10,
+      margin: 0,
       filename: "resume.pdf",
       image: { type: "jpeg", quality: 0.98 },
       html2canvas: { scale: 2 },
@@ -130,6 +134,7 @@ const ResumeBuilder = () => {
     icons.forEach((icon) => {
       icon.classList.remove("translate-y-[-7px]", "z-50");
     });
+
     element.classList.remove("w-[713px]");
   };
 
