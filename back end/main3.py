@@ -11,7 +11,7 @@ app.include_router(resume_routes.router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://resume-builder-0012.netlify.app"],
+    allow_origins=["https://resume-builder-1-bevb.onrender.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
