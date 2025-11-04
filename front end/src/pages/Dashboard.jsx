@@ -43,7 +43,7 @@ const Dashboard = () => {
         return;
       }
 
-      const res = await fetch("http://127.0.0.1:8000/resumes/", {
+      const res = await fetch("https://resume-builder-8cmy.onrender.com/resumes/", {
         method: "GET",
         credentials: "include",
         headers: {
@@ -193,7 +193,7 @@ const Dashboard = () => {
     }
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/resumes/${resumeId}`, {
+      const res = await fetch(`https://resume-builder-8cmy.onrender.com/resumes/${resumeId}`, {
         method: "DELETE",
         credentials: "include",
         headers: {
