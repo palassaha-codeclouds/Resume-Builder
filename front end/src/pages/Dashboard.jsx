@@ -43,7 +43,7 @@ const Dashboard = () => {
         return;
       }
 
-      const res = await fetch("https://resume-builder-8cmy.onrender.com/resumes/", {
+      const res = await fetch("http://127.0.0.1:8000/resumes/", {
         method: "GET",
         credentials: "include",
         headers: {
@@ -193,7 +193,7 @@ const Dashboard = () => {
     }
 
     try {
-      const res = await fetch(`https://resume-builder-8cmy.onrender.com/resumes/${resumeId}`, {
+      const res = await fetch(`http://127.0.0.1:8000/resumes/${resumeId}`, {
         method: "DELETE",
         credentials: "include",
         headers: {
@@ -293,7 +293,6 @@ const Dashboard = () => {
                 </p> */}
 
                   <div
-                    on
                     onClick={(e) => e.stopPropagation()}
                     className="absolute top-1 right-1 group-hover:flex items-center hidden"
                   >

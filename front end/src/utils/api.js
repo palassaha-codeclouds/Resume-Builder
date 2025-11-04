@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://resume-builder-8cmy.onrender.com";
+const API_BASE_URL = "http://127.0.0.1:8000";
 axios.defaults.withCredentials = true;
 
 const getCookie = (name) => {
